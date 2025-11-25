@@ -1,16 +1,18 @@
 import { useRoute } from "wouter";
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import ArticleCard from "@/components/ArticleCard";
-import { Calendar, Clock, MessageSquare, ArrowLeft } from "lucide-react";
+import { Calendar, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Card } from "@/components/ui/card";
 
 const articleData: Record<string, any> = {
   "1": {
     title: "13 Advanced Link Building Strategies You (Probably) Haven't Used",
     date: "Nov 20, 2025",
+    lastUpdated: "November 25, 2025",
     readTime: "15 min read",
     commentCount: 635,
     content: `
@@ -76,6 +78,7 @@ const relatedArticles = [
 
 export default function Article() {
   const [, params] = useRoute("/article/:id");
+  const [showFullIntro, setShowFullIntro] = useState(false);
   const articleId = params?.id || "1";
   const article = articleData[articleId] || articleData["1"];
 
@@ -84,45 +87,106 @@ export default function Article() {
       <Header />
       
       <main className="flex-1">
-        <article className="py-12">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-            <Link href="/articles" data-testid="link-back-articles">
-              <Button variant="ghost" size="sm" className="mb-8">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Articles
-              </Button>
-            </Link>
+        <article className="py-8">
+          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+            <div className="grid gap-8 lg:grid-cols-[1fr_200px]">
+              <div className="min-w-0">
+                <header className="mb-8">
+                  <h1 className="text-4xl font-bold leading-tight sm:text-5xl" data-testid="text-article-title">
+                    {article.title}
+                  </h1>
+                </header>
 
-            <header className="mb-8">
-              <h1 className="text-4xl font-bold leading-tight sm:text-5xl" data-testid="text-article-title">
-                {article.title}
-              </h1>
-              <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1" data-testid="text-article-date">
-                  <Calendar className="h-4 w-4" />
-                  {article.date}
+                <Card className="mb-8 bg-muted/50 p-6">
+                  <div className={showFullIntro ? "" : "relative"}>
+                    <p className="leading-relaxed text-muted-foreground">
+                      I focus on creating content that goes beyond SEO basics. I've been working in digital marketing for over a decade, consulting for companies ranging from startups to established enterprises.
+                    </p>
+                    {!showFullIntro && (
+                      <>
+                        <div className="mt-4 h-20 bg-gradient-to-b from-transparent to-muted/50" />
+                        <p className="mt-2 leading-relaxed text-muted-foreground">
+                          The basics can be incredibly effective, but I want to focus on unique, creative ways to achieve better rankings.
+                        </p>
+                      </>
+                    )}
+                    {showFullIntro && (
+                      <>
+                        <p className="mt-4 leading-relaxed text-muted-foreground">
+                          The basics can be incredibly effective, but hundreds of sites cover them well and I want to focus on unique, creative ways to achieve better rankings.
+                        </p>
+                        <p className="mt-4 leading-relaxed text-muted-foreground">
+                          Instead, here's my promise: <strong>I will put my absolute all into guides like this one to give original insights that help you get an edge over your competition</strong>.
+                        </p>
+                        <p className="mt-4 leading-relaxed text-muted-foreground">
+                          That's it. That's my pitch for you to stick around (or perhaps let you know this isn't the site for you).
+                        </p>
+                        <p className="mt-4 leading-relaxed text-muted-foreground">
+                          Thank you for being here!
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <button
+                    className="mt-4 p-0 h-auto font-normal text-primary underline hover:text-primary/80 transition-colors"
+                    onClick={() => setShowFullIntro(!showFullIntro)}
+                    data-testid="button-toggle-intro"
+                  >
+                    {showFullIntro ? "Show less" : "Read more"}
+                  </button>
+                </Card>
+
+                <div 
+                  className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-3xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-2xl prose-p:leading-relaxed prose-p:mb-6 prose-a:text-primary prose-a:underline prose-ul:my-6 prose-li:my-2 prose-li:leading-relaxed prose-strong:font-semibold"
+                  dangerouslySetInnerHTML={{ __html: article.content }}
+                  data-testid="content-article-body"
+                />
+              </div>
+
+              <aside className="hidden lg:block">
+                <div className="sticky top-24 space-y-6">
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-2">
+                      <MessageSquare className="mt-1 h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">Comments</p>
+                        <p className="text-2xl font-bold" data-testid="text-sidebar-comments">
+                          {article.commentCount}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <Calendar className="mt-1 h-4 w-4 text-muted-foreground" />
+                      <div>
+                        <p className="text-sm font-medium">Last Updated</p>
+                        <p className="text-sm text-muted-foreground" data-testid="text-sidebar-updated">
+                          {article.lastUpdated}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1" data-testid="text-article-readtime">
-                  <Clock className="h-4 w-4" />
-                  {article.readTime}
+              </aside>
+            </div>
+
+            <div className="mt-8 border-t pt-8 lg:hidden">
+              <div className="flex flex-wrap gap-6 text-sm">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-medium">{article.commentCount} comments</span>
                 </div>
-                <div className="flex items-center gap-1" data-testid="text-article-comments">
-                  <MessageSquare className="h-4 w-4" />
-                  {article.commentCount} comments
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-muted-foreground">Last updated: {article.lastUpdated}</span>
                 </div>
               </div>
-            </header>
-
-            <div 
-              className="prose prose-lg max-w-none dark:prose-invert prose-headings:font-bold prose-h2:mt-8 prose-h2:text-3xl prose-h3:mt-6 prose-h3:text-2xl prose-p:leading-relaxed prose-a:text-primary prose-a:underline prose-ul:my-6 prose-li:my-2"
-              dangerouslySetInnerHTML={{ __html: article.content }}
-              data-testid="content-article-body"
-            />
+            </div>
           </div>
         </article>
 
         <section className="border-t py-12">
-          <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             <NewsletterSignup variant="card" />
           </div>
         </section>
