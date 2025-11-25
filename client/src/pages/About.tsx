@@ -1,29 +1,33 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import NewsletterSignup from "@/components/NewsletterSignup";
-import { Card, CardContent } from "@/components/ui/card";
-import { Award, BookOpen, Users, TrendingUp } from "lucide-react";
+import { MapPin, Link as LinkIcon, Calendar, Twitter, Linkedin, Github, Mail } from "lucide-react";
+import { Card } from "@/components/ui/card";
 
 const highlights = [
   {
-    icon: Award,
-    title: "10+ Years Experience",
-    description: "Over a decade of hands-on experience in SEO and digital marketing",
+    label: "Location",
+    value: "Hong Kong",
   },
   {
-    icon: BookOpen,
-    title: "100+ Articles Published",
-    description: "In-depth guides and case studies read by thousands of professionals",
+    label: "Website",
+    value: "detailed.com",
+    link: "https://bobcatdigital.co",
   },
   {
-    icon: Users,
-    title: "Consulted 50+ Brands",
-    description: "Helped businesses from startups to enterprise scale their organic traffic",
+    label: "Joined",
+    value: "January 2008",
   },
   {
-    icon: TrendingUp,
-    title: "Proven Results",
-    description: "Delivered measurable growth in rankings, traffic, and conversions",
+    label: "Posts",
+    value: "625",
+  },
+  {
+    label: "Following",
+    value: "41.3K",
+  },
+  {
+    label: "Followers",
+    value: "40.7K",
   },
 ];
 
@@ -33,95 +37,155 @@ export default function About() {
       <Header />
       
       <main className="flex-1">
-        <section className="border-b py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-4xl font-bold sm:text-5xl" data-testid="text-page-title">About Me</h1>
-            <div className="prose prose-lg mt-8 max-w-none dark:prose-invert">
-              <p className="text-lg leading-relaxed text-muted-foreground">
-                Hi, I'm Usman Bashir. I've been working in digital marketing and SEO for over a decade, helping businesses of all sizes improve their online visibility and drive meaningful growth through organic search.
-              </p>
-              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                This website is where I share what I've learned along the way—in-depth strategies, case studies, and practical insights you can apply to your own projects. I focus on creating content that goes beyond the basics, offering unique perspectives and actionable advice.
-              </p>
-              <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-                I've consulted for companies ranging from early-stage startups to established enterprises, and I've seen what works (and what doesn't) across different industries and competitive landscapes. My goal is to help you cut through the noise and focus on strategies that actually move the needle.
-              </p>
+        <div className="mx-auto max-w-3xl">
+          <div className="relative">
+            <div className="h-48 w-full bg-gradient-to-r from-primary/20 to-primary/40">
+              <img 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=400&fit=crop"
+                alt="Cover"
+                className="h-full w-full object-cover"
+              />
             </div>
-          </div>
-        </section>
+            
+            <div className="px-4 sm:px-6 lg:px-8">
+              <div className="-mt-16 mb-4">
+                <div className="h-32 w-32 rounded-full border-4 border-background bg-muted overflow-hidden">
+                  <img 
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop"
+                    alt="Usman Bashir"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
 
-        <section className="py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="mb-8 text-3xl font-bold" data-testid="text-highlights-heading">Highlights</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-              {highlights.map((highlight, index) => {
-                const Icon = highlight.icon;
-                return (
-                  <Card key={index} data-testid={`card-highlight-${index}`}>
-                    <CardContent className="pt-6">
-                      <Icon className="mb-4 h-8 w-8 text-primary" />
-                      <h3 className="mb-2 font-semibold" data-testid={`text-highlight-title-${index}`}>
-                        {highlight.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground" data-testid={`text-highlight-desc-${index}`}>
-                        {highlight.description}
-                      </p>
-                    </CardContent>
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold" data-testid="text-name">Usman Bashir</h1>
+                <p className="text-muted-foreground">@usmanbashir</p>
+              </div>
+
+              <div className="mb-6">
+                <p className="text-base leading-relaxed">
+                  Created <a href="https://bobcatdigital.co" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">bobcatdigital.co</a> (500K+ weekly users 📈). Now proudly working at Bobcat Digital. 
+                  Somehow mentioned on TechCrunch, Forbes, FT, BBC etc.
+                </p>
+              </div>
+
+              <div className="mb-6 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <MapPin className="h-4 w-4" />
+                  <span>Hong Kong</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <LinkIcon className="h-4 w-4" />
+                  <a href="https://bobcatdigital.co" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                    bobcatdigital.co
+                  </a>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  <span>Joined January 2008</span>
+                </div>
+              </div>
+
+              <div className="mb-6 flex gap-4 text-sm">
+                <div>
+                  <span className="font-bold">625</span>{" "}
+                  <span className="text-muted-foreground">Following</span>
+                </div>
+                <div>
+                  <span className="font-bold">41.3K</span>{" "}
+                  <span className="text-muted-foreground">Followers</span>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <p className="mb-2 text-sm text-muted-foreground">
+                  Followed by Jake Ward, SEO Bear, and 120 others you follow
+                </p>
+              </div>
+
+              <div className="mb-8 flex gap-4">
+                <a
+                  href="https://x.com/imusmanbashir"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  data-testid="link-twitter"
+                >
+                  <Twitter className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://linkedin.com/in/usmanbashir"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  data-testid="link-linkedin"
+                >
+                  <Linkedin className="h-5 w-5" />
+                </a>
+                <a
+                  href="https://github.com/usmanbashir"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  data-testid="link-github"
+                >
+                  <Github className="h-5 w-5" />
+                </a>
+                <a
+                  href="mailto:contact@usmanbashir.net"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  data-testid="link-email"
+                >
+                  <Mail className="h-5 w-5" />
+                </a>
+              </div>
+
+              <div className="border-t pt-8 pb-16">
+                <h2 className="mb-6 text-2xl font-bold">Highlights</h2>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <Card className="p-6">
+                    <h3 className="mb-2 text-lg font-semibold">🎯 Experience</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Over a decade of hands-on experience in SEO and digital marketing, consulting for companies ranging from startups to enterprise brands.
+                    </p>
                   </Card>
-                );
-              })}
-            </div>
-          </div>
-        </section>
+                  <Card className="p-6">
+                    <h3 className="mb-2 text-lg font-semibold">📊 Track Record</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Helped businesses achieve measurable growth in rankings, organic traffic, and conversions through data-driven strategies.
+                    </p>
+                  </Card>
+                  <Card className="p-6">
+                    <h3 className="mb-2 text-lg font-semibold">✍️ Published Work</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Hundreds of in-depth articles and case studies read by thousands of SEO professionals worldwide.
+                    </p>
+                  </Card>
+                  <Card className="p-6">
+                    <h3 className="mb-2 text-lg font-semibold">🚀 Focus Areas</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Technical SEO, content strategy, link building, algorithm analysis, and scaling organic growth.
+                    </p>
+                  </Card>
+                </div>
 
-        <section className="border-t py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <h2 className="mb-6 text-3xl font-bold" data-testid="text-expertise-heading">Areas of Expertise</h2>
-            <div className="prose prose-lg max-w-none dark:prose-invert">
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-start">
-                  <span className="mr-2 mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"></span>
-                  <span>Technical SEO and website optimization</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"></span>
-                  <span>Content strategy and creation</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"></span>
-                  <span>Link building and outreach</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"></span>
-                  <span>Local and e-commerce SEO</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"></span>
-                  <span>Analytics and data-driven decision making</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2 mt-1 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary"></span>
-                  <span>Algorithm analysis and SERP research</span>
-                </li>
-              </ul>
+                <div className="mt-12">
+                  <h2 className="mb-4 text-2xl font-bold">About This Site</h2>
+                  <p className="mb-4 text-muted-foreground leading-relaxed">
+                    This is my personal site where I share what I've learned along the way—in-depth strategies, case studies, and practical insights you can apply to your own projects.
+                  </p>
+                  <p className="mb-4 text-muted-foreground leading-relaxed">
+                    I focus on creating content that goes beyond the basics, offering unique perspectives and actionable advice. The basics can be incredibly effective, but hundreds of sites cover them well. I want to focus on unique, creative strategies to achieve better results.
+                  </p>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Here's my promise: <strong>I will put my absolute all into guides like this one to give original insights that help you get an edge over your competition</strong>.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
-        </section>
-
-        <section className="border-t py-16">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            <h2 className="mb-6 text-3xl font-bold" data-testid="text-contact-heading">Get in Touch</h2>
-            <p className="mb-6 text-lg text-muted-foreground">
-              For agency services and client work, please visit my main website. This personal site is primarily for publishing articles and sharing insights.
-            </p>
-            <p className="text-muted-foreground">
-              Feel free to connect with me on social media or subscribe to the newsletter to stay updated with new articles.
-            </p>
-            <div className="mt-8">
-              <NewsletterSignup variant="card" />
-            </div>
-          </div>
-        </section>
+        </div>
       </main>
 
       <Footer />

@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <h3 className="text-sm font-semibold">Usman Bashir</h3>
+            <h3 className="text-2xl font-bold" style={{ fontFamily: 'Allura, cursive' }}>Bashir</h3>
             <p className="mt-4 text-sm text-muted-foreground">
               Digital marketing and SEO insights from the field.
             </p>
@@ -33,6 +33,17 @@ export default function Footer() {
                   <span className="text-sm text-muted-foreground hover:text-foreground">About</span>
                 </Link>
               </li>
+              <li>
+                <a 
+                  href="https://bobcatdigital.co" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                  data-testid="link-footer-agency"
+                >
+                  Bobcat Digital
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -40,7 +51,7 @@ export default function Footer() {
             <h3 className="text-sm font-semibold">Connect</h3>
             <div className="mt-4 flex gap-4">
               <a
-                href="https://twitter.com"
+                href="https://x.com/imusmanbashir"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-testid="link-twitter"
@@ -49,7 +60,7 @@ export default function Footer() {
                 <Twitter className="h-5 w-5" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://linkedin.com/in/usmanbashir"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-testid="link-linkedin"
@@ -58,7 +69,7 @@ export default function Footer() {
                 <Linkedin className="h-5 w-5" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/usmanbashir"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-testid="link-github"

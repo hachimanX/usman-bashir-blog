@@ -15,6 +15,11 @@ const articleData: Record<string, any> = {
     date: "Nov 20, 2025",
     lastUpdated: "November 25, 2025",
     commentCount: 635,
+    topComments: [
+      { author: "Sarah Chen", text: "This is exactly what I needed! The Screaming Frog technique is brilliant.", avatar: "SC" },
+      { author: "Mike Rodriguez", text: "Tried the comment analysis strategy and found 10 great content ideas in 20 minutes. Thanks!", avatar: "MR" },
+      { author: "Emma Watson", text: "Best link building guide I've read this year. Very actionable.", avatar: "EW" },
+    ],
     featuredImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=600&fit=crop",
     content: `
       <p>Copyblogger has long been one of the most authoritative blogs on copywriting and content marketing.</p>
@@ -243,6 +248,38 @@ export default function Article() {
             </div>
           </div>
         </article>
+
+        {article.topComments && article.topComments.length > 0 && (
+          <section className="border-t py-12 bg-muted/20">
+            <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+              <h2 className="mb-8 text-2xl font-bold" data-testid="text-comments-heading">
+                Top Comments ({article.commentCount})
+              </h2>
+              <div className="space-y-6">
+                {article.topComments.map((comment: any, index: number) => (
+                  <div key={index} className="rounded-lg border bg-background p-6" data-testid={`comment-${index}`}>
+                    <div className="flex items-start gap-4">
+                      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
+                        {comment.avatar}
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold">{comment.author}</p>
+                        <p className="mt-2 text-muted-foreground">{comment.text}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              {!article.topComments || article.topComments.length === 0 && (
+                <div className="rounded-lg border bg-background p-12 text-center">
+                  <p className="text-lg text-muted-foreground">
+                    Be the first to start the conversation! Share your thoughts below.
+                  </p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
         <section className="border-t py-12">
           <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">

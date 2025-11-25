@@ -55,7 +55,7 @@ export default function Header() {
               className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground/80"
               data-testid="link-nav-agency"
             >
-              Agency
+              Bobcat Digital
             </a>
             <Button
               size="icon"
