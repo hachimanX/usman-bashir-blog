@@ -29,7 +29,7 @@ export default function Header() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" data-testid="link-home">
-            <span className="text-xl font-bold tracking-tight">Usman Bashir</span>
+            <span className="text-3xl font-bold tracking-tight" style={{ fontFamily: 'Allura, cursive' }}>Bashir</span>
           </Link>
 
           <nav className="flex items-center gap-6">
@@ -48,6 +48,15 @@ export default function Header() {
                 About
               </span>
             </Link>
+            <a 
+              href="https://bobcatdigital.co" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground/80"
+              data-testid="link-nav-agency"
+            >
+              Agency
+            </a>
             <Button
               size="icon"
               variant="ghost"

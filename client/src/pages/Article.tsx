@@ -192,17 +192,28 @@ export default function Article() {
                       {showFullIntro && (
                         <>
                           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                            I've been writing about SEO for over a decade, consulting for companies ranging from startups to established enterprises.
+                            I've been working in digital marketing for over a decade, helping businesses ranging from startups to established brands improve their online presence.
                           </p>
                           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                            The basics can be incredibly effective, but I want to focus on unique, creative ways to achieve better rankings.
+                            The basics can be incredibly effective, but hundreds of sites cover them well. I want to focus on unique, creative strategies to achieve better results.
                           </p>
                           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                            Instead, here's my promise: <strong>I will put my absolute all into guides like this one to give original insights that help you get an edge over your competition</strong>.
+                            Here's my promise: <strong>I will put my absolute all into guides like this one to give original insights that help you get an edge over your competition</strong>.
+                          </p>
+                          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                            That's it. That's my pitch for you to stick around (or perhaps let you know this isn't the site for you).
+                          </p>
+                          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                            This is already too much text for a 'click-to-read-more-fade-thing' but there's more if you like.
                           </p>
                           <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
                             Thank you for being here!
                           </p>
+                          <div className="mt-6 border-t pt-6">
+                            <p className="text-4xl font-bold" style={{ fontFamily: 'Allura, cursive' }}>
+                              Bashir
+                            </p>
+                          </div>
                         </>
                       )}
                     </div>
