@@ -7,6 +7,9 @@ import Home from "@/pages/Home";
 import Articles from "@/pages/Articles";
 import About from "@/pages/About";
 import Article from "@/pages/Article";
+import AdminLogin from "@/pages/AdminLogin";
+import AdminDashboard from "@/pages/AdminDashboard";
+import AdminPostEditor from "@/pages/AdminPostEditor";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -15,13 +18,16 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/articles" component={Articles} />
       <Route path="/about" component={About} />
-      <Route path="/article/:id" component={Article} />
+      <Route path="/article/:slug" component={Article} />
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/posts/:id" component={AdminPostEditor} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-function App() {
+export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -31,5 +37,3 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-export default App;
