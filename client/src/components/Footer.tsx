@@ -1,46 +1,26 @@
 import { Link } from "wouter";
-import { Twitter, Linkedin, Github, Mail } from "lucide-react";
+import { Twitter, Linkedin, Mail } from "lucide-react";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="border-t bg-background">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <h3 className="text-2xl font-bold" style={{ fontFamily: 'Allura, cursive' }}>Bashir</h3>
+            <h3 className="text-2xl font-bold" style={{ fontFamily: "Allura, cursive" }}>Bashir</h3>
             <p className="mt-4 text-sm text-muted-foreground">
-              Digital marketing and SEO insights from the field.
+              Notes on SEO, digital marketing, and building things online — with occasional digressions into PC gaming and anime.
             </p>
           </div>
 
           <div>
             <h3 className="text-sm font-semibold">Quick Links</h3>
             <ul className="mt-4 space-y-3">
+              <li><Link href="/"><span className="text-sm text-muted-foreground hover:text-foreground">Home</span></Link></li>
+              <li><Link href="/articles"><span className="text-sm text-muted-foreground hover:text-foreground">Articles</span></Link></li>
+              <li><Link href="/about"><span className="text-sm text-muted-foreground hover:text-foreground">About</span></Link></li>
               <li>
-                <Link href="/" data-testid="link-footer-home">
-                  <span className="text-sm text-muted-foreground hover:text-foreground">Home</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/articles" data-testid="link-footer-articles">
-                  <span className="text-sm text-muted-foreground hover:text-foreground">Articles</span>
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" data-testid="link-footer-about">
-                  <span className="text-sm text-muted-foreground hover:text-foreground">About</span>
-                </Link>
-              </li>
-              <li>
-                <a 
-                  href="https://bobcatdigital.co" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-foreground"
-                  data-testid="link-footer-agency"
-                >
+                <a href="https://bobcatdigital.co" target="_blank" rel="noopener noreferrer" className="text-sm text-muted-foreground hover:text-foreground">
                   Bobcat Digital
                 </a>
               </li>
@@ -50,38 +30,13 @@ export default function Footer() {
           <div>
             <h3 className="text-sm font-semibold">Connect</h3>
             <div className="mt-4 flex gap-4">
-              <a
-                href="https://x.com/imusmanbashir"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="link-twitter"
-                className="text-muted-foreground hover:text-foreground"
-              >
+              <a href="https://x.com/imusmanbashir" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground" title="Twitter / X">
                 <Twitter className="h-5 w-5" />
               </a>
-              <a
-                href="https://linkedin.com/in/usmanbashir"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="link-linkedin"
-                className="text-muted-foreground hover:text-foreground"
-              >
+              <a href="https://linkedin.com/in/usmanbashir" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-foreground" title="LinkedIn">
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a
-                href="https://github.com/usmanbashir"
-                target="_blank"
-                rel="noopener noreferrer"
-                data-testid="link-github"
-                className="text-muted-foreground hover:text-foreground"
-              >
-                <Github className="h-5 w-5" />
-              </a>
-              <a
-                href="mailto:contact@usmanbashir.net"
-                data-testid="link-email"
-                className="text-muted-foreground hover:text-foreground"
-              >
+              <a href="mailto:usman@bobcatdesigners.com" className="text-muted-foreground hover:text-foreground" title="Email">
                 <Mail className="h-5 w-5" />
               </a>
             </div>
@@ -89,9 +44,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 border-t pt-8 text-center">
-          <p className="text-sm text-muted-foreground">
-            © {currentYear} Usman Bashir. All rights reserved.
-          </p>
+          <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} Usman Bashir. All rights reserved.</p>
         </div>
       </div>
     </footer>

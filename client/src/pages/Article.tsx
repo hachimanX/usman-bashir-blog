@@ -11,6 +11,26 @@ function formatDate(d: string | null) {
   return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
 }
 
+function setMeta(name: string, content: string) {
+  let el = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement | null;
+  if (!el) { el = document.createElement("meta"); el.setAttribute("name", name); document.head.appendChild(el); }
+  el.setAttribute("content", content);
+}
+
+function injectSchema(json: string) {
+  const existing = document.getElementById("article-schema");
+  if (existing) existing.remove();
+  const script = document.createElement("script");
+  script.id = "article-schema";
+  script.type = "application/ld+json";
+  script.textContent = json;
+  document.head.appendChild(script);
+}
+
+function removeSchema() {
+  document.getElementById("article-schema")?.remove();
+}
+
 export default function Article() {
   const [, params] = useRoute("/article/:slug");
   const [post, setPost] = useState<Post | null>(null);
@@ -20,21 +40,27 @@ export default function Article() {
   useEffect(() => {
     if (!params?.slug) return;
     fetch(`/api/posts/${params.slug}`)
-      .then((r) => {
-        if (!r.ok) { setNotFound(true); setLoading(false); return null; }
-        return r.json();
-      })
+      .then((r) => { if (!r.ok) { setNotFound(true); setLoading(false); return null; } return r.json(); })
       .then((data) => { if (data) { setPost(data); setLoading(false); } })
       .catch(() => { setNotFound(true); setLoading(false); });
+    return () => { removeSchema(); };
   }, [params?.slug]);
+
+  // Inject SEO meta + schema after post loads
+  useEffect(() => {
+    if (!post) return;
+    const pageTitle = post.seoTitle || post.title;
+    document.title = `${pageTitle} — Usman Bashir`;
+    if (post.metaDescription) setMeta("description", post.metaDescription);
+    if (post.schemaMarkup) injectSchema(post.schemaMarkup);
+    return () => { document.title = "Usman Bashir"; removeSchema(); };
+  }, [post]);
 
   if (loading) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
-        <main className="flex flex-1 items-center justify-center">
-          <p className="text-muted-foreground">Loading…</p>
-        </main>
+        <main className="flex flex-1 items-center justify-center"><p className="text-muted-foreground">Loading…</p></main>
         <Footer />
       </div>
     );
@@ -59,7 +85,6 @@ export default function Article() {
       <main className="flex-1">
         <article className="py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
             <Link href="/articles" className="mb-8 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors">
               <ArrowLeft className="h-4 w-4" /> All Articles
             </Link>
@@ -81,15 +106,19 @@ export default function Article() {
 
             <div className="grid gap-8 lg:grid-cols-[1fr_280px]">
               <div
-                className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-3xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-p:leading-relaxed prose-p:text-[17px] prose-p:mb-6 prose-a:text-primary prose-a:underline"
+                className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-bold prose-h2:mt-12 prose-h2:mb-4 prose-h2:text-3xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-p:leading-relaxed prose-p:text-[17px] prose-p:mb-6 prose-a:text-primary prose-a:underline prose-a:target-blank"
                 dangerouslySetInnerHTML={{ __html: post.content }}
               />
               <aside className="hidden lg:block">
                 <div className="sticky top-24 rounded-lg border bg-muted/30 p-6">
                   <p className="text-sm leading-relaxed text-muted-foreground">
-                    I write about SEO, digital marketing, business setup, and design. Practical guides with no fluff.
+                    I write about SEO, digital marketing, and building businesses online. Practical notes, no fluff.
                   </p>
                   <p className="mt-4 text-4xl font-bold" style={{ fontFamily: "Allura, cursive" }}>Bashir</p>
+                  <div className="mt-4 flex gap-3">
+                    <a href="https://x.com/imusmanbashir" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">Twitter</a>
+                    <a href="https://linkedin.com/in/usmanbashir" target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">LinkedIn</a>
+                  </div>
                 </div>
               </aside>
             </div>
