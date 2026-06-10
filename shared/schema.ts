@@ -19,22 +19,16 @@ export const posts = pgTable("posts", {
   category: text("category").notNull().default("General"),
   status: text("status").notNull().default("draft"),
   readTime: text("read_time").notNull().default("5 min read"),
+  seoTitle: text("seo_title"),
+  metaDescription: text("meta_description"),
+  schemaMarkup: text("schema_markup"),
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-});
-
-export const insertPostSchema = createInsertSchema(posts).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
-
+export const insertUserSchema = createInsertSchema(users).pick({ username: true, password: true });
+export const insertPostSchema = createInsertSchema(posts).omit({ id: true, createdAt: true, updatedAt: true });
 export const updatePostSchema = insertPostSchema.partial();
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
