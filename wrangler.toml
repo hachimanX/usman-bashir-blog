@@ -3,6 +3,13 @@ main = "worker/index.ts"
 compatibility_date = "2026-08-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Wrangler creates the DNS records and TLS certificates for these on deploy.
+# Any pre-existing record for the same hostname must be deleted first.
+routes = [
+  { pattern = "usmanbashir.net", custom_domain = true },
+  { pattern = "www.usmanbashir.net", custom_domain = true },
+]
+
 # Everything that isn't /api/* is served straight from Cloudflare's edge cache
 # and is not billed as a Worker request. Unmatched paths fall back to index.html
 # so wouter's client-side routes (/articles/:slug, /admin/*) resolve.
