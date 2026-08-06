@@ -36,5 +36,10 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
+    // `npm run dev` serves the client with HMR and forwards API calls to the
+    // Worker running under `npm run dev:api`.
+    proxy: {
+      "/api": "http://localhost:8787",
+    },
   },
 });

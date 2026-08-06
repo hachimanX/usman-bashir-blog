@@ -1,0 +1,7 @@
+# Copy to `.dev.vars` for local `npm run dev:api`. Never commit the real file.
+# In production these are set with `wrangler secret put <NAME>` instead.
+DATABASE_URL="postgresql://USER:PASSWORD@ep-frosty-morning-apupzr6m.c-7.us-east-1.aws.neon.tech/DBNAME?sslmode=require"
+SESSION_SECRET="generate-a-long-random-string"
+ADMIN_USERNAME="your-admin-username"
+ADMIN_PASSWORD="your-admin-password"
+IMGBB_API_KEY="your-imgbb-key"

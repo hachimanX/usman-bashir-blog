@@ -1,0 +1,12 @@
+name = "usman-bashir-blog"
+main = "worker/index.ts"
+compatibility_date = "2026-08-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Everything that isn't /api/* is served straight from Cloudflare's edge cache
+# and is not billed as a Worker request. Unmatched paths fall back to index.html
+# so wouter's client-side routes (/articles/:slug, /admin/*) resolve.
+[assets]
+directory = "./dist/public"
+not_found_handling = "single-page-application"
+run_worker_first = ["/api/*"]

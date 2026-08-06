@@ -1,6 +1,7 @@
 node_modules
 dist
 .DS_Store
-server/public
+.wrangler
+.dev.vars
 vite.config.ts.*
 *.tar.gz
