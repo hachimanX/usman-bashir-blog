@@ -4,7 +4,7 @@ import Header from "@/components/Header";
 import Seo from "@/components/Seo";
 import Footer from "@/components/Footer";
 import NewsletterSignup from "@/components/NewsletterSignup";
-import { Calendar, Clock, ArrowLeft, ArrowRight } from "lucide-react";
+import { Calendar, Clock, ArrowLeft, ArrowRight, Linkedin } from "lucide-react";
 import { SiX } from "react-icons/si";
 import { PROFILE_LINKS } from "@shared/person";
 import { articleSchema, formatArticleDate, initialArticle, loadArticle, type Article as ArticleData } from "@/lib/content";
@@ -122,9 +122,12 @@ export default function Article() {
                   >
                     More about me <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
-                  <div className="flex gap-4 border-t pt-3 text-sm">
-                    <a href={PROFILE_LINKS.x} target="_blank" rel="noopener noreferrer me" className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground"><SiX className="h-3 w-3" aria-hidden="true" /> X</a>
-                    <a href={PROFILE_LINKS.linkedin} target="_blank" rel="noopener noreferrer me" className="text-muted-foreground hover:text-foreground">LinkedIn</a>
+                  <div className="border-t pt-2">
+                  <div className="-ml-3 flex gap-1 text-sm">
+                    {/* Icons only: the X logo already says "X", so a text label beside it read as two. */}
+                    <a href={PROFILE_LINKS.x} target="_blank" rel="noopener noreferrer me" aria-label="X" className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"><SiX className="h-4 w-4" aria-hidden="true" /></a>
+                    <a href={PROFILE_LINKS.linkedin} target="_blank" rel="noopener noreferrer me" aria-label="LinkedIn" className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground"><Linkedin className="h-5 w-5" aria-hidden="true" /></a>
+                  </div>
                   </div>
                 </div>
               </aside>

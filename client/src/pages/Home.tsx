@@ -34,7 +34,7 @@ import { ARTICLES } from "@/lib/content";
 
 const ELSEWHERE: { href: string; label: string; icon: ComponentType<{ className?: string }> }[] = [
   { href: PROFILE_LINKS.linkedin, label: "LinkedIn", icon: Linkedin },
-  { href: PROFILE_LINKS.x, label: "X", icon: SiX },
+  { href: PROFILE_LINKS.x, label: "@imusmanbashir", icon: SiX },
   { href: PROFILE_LINKS.startfleet, label: "StartFleet", icon: Briefcase },
   { href: PROFILE_LINKS.bobcat, label: "Bobcat Digital", icon: Palette },
 ];
