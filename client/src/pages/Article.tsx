@@ -5,53 +5,34 @@ import Seo from "@/components/Seo";
 import Footer from "@/components/Footer";
 import NewsletterSignup from "@/components/NewsletterSignup";
 import { Calendar, Clock, ArrowLeft, ArrowRight } from "lucide-react";
-import { AUTHOR_REF, PROFILE_LINKS } from "@shared/person";
-import type { Post } from "@shared/schema";
-
-function formatDate(d: string | null) {
-  if (!d) return "";
-  return new Date(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
-}
+import { SiX } from "react-icons/si";
+import { PROFILE_LINKS } from "@shared/person";
+import { articleSchema, formatArticleDate, initialArticle, loadArticle, type Article as ArticleData } from "@/lib/content";
 
 export default function Article() {
   const [, params] = useRoute("/article/:slug");
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
+  const slug = params?.slug ?? "";
+  // Prerendered pages carry their own body, so the first render already has
+  // the article and nothing is fetched. Only in-app navigation loads the
+  // static JSON file for the next one.
+  const [post, setPost] = useState<ArticleData | null>(() => initialArticle(slug));
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    if (!params?.slug) return;
-    fetch(`/api/posts/${params.slug}`)
-      .then((r) => { if (!r.ok) { setNotFound(true); setLoading(false); return null; } return r.json(); })
-      .then((data) => { if (data) { setPost(data); setLoading(false); } })
-      .catch(() => { setNotFound(true); setLoading(false); });
-  }, [params?.slug]);
+    if (!slug || post?.slug === slug) return;
+    let cancelled = false;
+    setPost(null);
+    setNotFound(false);
+    loadArticle(slug)
+      .then((a) => !cancelled && setPost(a))
+      .catch(() => !cancelled && setNotFound(true));
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
-  // Prefer the post's hand-written schema; fall back to a generated BlogPosting
-  // so every article ships with structured data even when the field is empty.
-  const articleSchema = post
-    ? (() => {
-        if (post.schemaMarkup) {
-          try {
-            return JSON.parse(post.schemaMarkup) as Record<string, unknown>;
-          } catch {
-            /* fall through to the generated one */
-          }
-        }
-        return {
-          "@context": "https://schema.org",
-          "@type": "BlogPosting",
-          headline: post.title,
-          description: post.metaDescription || post.excerpt,
-          image: post.coverImage || undefined,
-          datePublished: post.publishedAt ?? undefined,
-          dateModified: post.updatedAt ?? post.publishedAt ?? undefined,
-          author: AUTHOR_REF,
-        } as Record<string, unknown>;
-      })()
-    : null;
-
-  if (loading) {
+  if (!post && !notFound) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
@@ -61,7 +42,7 @@ export default function Article() {
     );
   }
 
-  if (notFound || !post) {
+  if (!post) {
     return (
       <div className="flex min-h-screen flex-col">
         <Header />
@@ -77,13 +58,12 @@ export default function Article() {
   return (
     <div className="flex min-h-screen flex-col">
       <Seo
-        title={`${post.seoTitle || post.title} — Usman Bashir`}
-        description={post.metaDescription || post.excerpt}
+        title={`${post.title} — Usman Bashir`}
+        description={post.excerpt}
         path={`/article/${post.slug}`}
-        image={post.coverImage}
         type="article"
-        publishedTime={post.publishedAt ? new Date(post.publishedAt).toISOString() : null}
-        schema={articleSchema}
+        publishedTime={post.date}
+        schema={articleSchema(post)}
       />
       <Header />
       <main id="main" className="flex-1">
@@ -100,18 +80,11 @@ export default function Article() {
               <span className="font-mono text-xs font-medium uppercase tracking-[0.12em] text-primary">{post.category}</span>
               <h1 className="mt-3 text-4xl font-semibold leading-[1.1] sm:text-5xl">{post.title}</h1>
               <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                {post.publishedAt && (
-                  <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />{formatDate(post.publishedAt as any)}</span>
-                )}
+                <span className="flex items-center gap-1"><Calendar className="h-4 w-4" />{formatArticleDate(post.date, "long")}</span>
                 <span className="flex items-center gap-1"><Clock className="h-4 w-4" />{post.readTime}</span>
               </div>
             </header>
 
-            {post.coverImage && (
-              <div className="mb-12">
-                <img src={post.coverImage} alt={post.title} className="w-full rounded-lg object-cover" style={{ maxHeight: "500px" }} />
-              </div>
-            )}
 
             <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_280px]">
               {/* prose-brand maps the typography plugin's colours to the site
@@ -120,7 +93,7 @@ export default function Article() {
                   readable next to the sidebar. */}
               <div
                 className="prose prose-lg prose-brand min-w-0 max-w-[72ch] prose-headings:font-semibold prose-h2:mt-14 prose-h2:mb-4 prose-h2:text-3xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-p:leading-relaxed prose-p:text-[17px] prose-p:mb-6 prose-a:underline-offset-2 prose-table:text-base"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: post.html }}
               />
               {/* Author box: a face and a link to /about on every article is what
                   ties the writing back to a real, checkable person. */}
@@ -150,7 +123,7 @@ export default function Article() {
                     More about me <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                   <div className="flex gap-4 border-t pt-3 text-sm">
-                    <a href={PROFILE_LINKS.x} target="_blank" rel="noopener noreferrer me" className="text-muted-foreground hover:text-foreground">X</a>
+                    <a href={PROFILE_LINKS.x} target="_blank" rel="noopener noreferrer me" className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground"><SiX className="h-3 w-3" aria-hidden="true" /> X</a>
                     <a href={PROFILE_LINKS.linkedin} target="_blank" rel="noopener noreferrer me" className="text-muted-foreground hover:text-foreground">LinkedIn</a>
                   </div>
                 </div>

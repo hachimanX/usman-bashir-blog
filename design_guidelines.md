@@ -16,6 +16,9 @@ signature should see a real, checkable person. Improve this site; do not rebuild
 - **Shapes:** buttons and pills fully round, cards 16px (`rounded-2xl`).
 - **Helpers:** `.brand-glow` (soft wash), `.brand-mark` (gradient: UB mark, portrait halo),
   `.surface-grid` (faded graph-paper texture).
+- **Architecture:** static. Every page is prerendered at build time and served from Cloudflare's
+  edge; only `/api/subscribe` runs code. Articles are Markdown in `content/` (see
+  `content/README.md`). Copy rules for editors: `CONTENT-RULES.md`.
 - **Identity data** lives in `shared/person.ts` (Person schema, full legal name as
   `alternateName`, profile links). Homepage copy lives in `shared/home.ts`, which both the
   React page and the worker's crawler HTML read.

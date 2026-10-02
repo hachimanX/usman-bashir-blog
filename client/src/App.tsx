@@ -1,4 +1,3 @@
-import { lazy, Suspense } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -12,20 +11,6 @@ import Tools from "@/pages/Tools";
 import TrademarkPrecheckPage from "@/pages/tools/TrademarkPrecheckPage";
 import Legal from "@/pages/Legal";
 import NotFound from "@/pages/not-found";
-
-// The admin CMS pulls in the whole TipTap editor. Loading it lazily keeps it
-// out of the bundle every public visitor downloads.
-const AdminLogin = lazy(() => import("@/pages/AdminLogin"));
-const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
-const AdminPostEditor = lazy(() => import("@/pages/AdminPostEditor"));
-
-function AdminLoading() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p className="text-muted-foreground">Loading…</p>
-    </div>
-  );
-}
 
 function Router() {
   return (
@@ -42,15 +27,6 @@ function Router() {
       <Route path="/terms">{() => <Legal slug="terms" />}</Route>
       <Route path="/privacy">{() => <Legal slug="privacy" />}</Route>
       <Route path="/affiliate-disclosure">{() => <Legal slug="affiliate-disclosure" />}</Route>
-      <Route path="/admin/login">
-        <Suspense fallback={<AdminLoading />}><AdminLogin /></Suspense>
-      </Route>
-      <Route path="/admin">
-        <Suspense fallback={<AdminLoading />}><AdminDashboard /></Suspense>
-      </Route>
-      <Route path="/admin/posts/:id">
-        <Suspense fallback={<AdminLoading />}><AdminPostEditor /></Suspense>
-      </Route>
       <Route component={NotFound} />
     </Switch>
   );

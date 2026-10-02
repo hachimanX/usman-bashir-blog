@@ -1,10 +1,10 @@
 import { useEffect } from "react";
+import { SITE_ORIGIN } from "@shared/person";
 
 const SITE_NAME = "Usman Bashir";
-const SITE_ORIGIN = "https://usmanbashir.net";
 const DEFAULT_IMAGE = `${SITE_ORIGIN}/og-default.png`;
 
-interface SeoProps {
+export interface SeoProps {
   title: string;
   description: string;
   /** Path only, e.g. "/about". Combined with the canonical origin. */
@@ -17,10 +17,22 @@ interface SeoProps {
 }
 
 /**
- * Head management for a client-rendered SPA. Every tag is tagged with
- * data-seo so a route change can clear the previous page's tags before
- * writing its own — otherwise they accumulate as the user navigates.
+ * Head tags for a page, in two modes.
+ *
+ * At build time the prerender renders each page on the server, where effects
+ * never run. Each <Seo> instead reports its props to the sink set below, and
+ * the prerender writes those exact tags into the static HTML (seoHeadTags).
+ * One source of truth: the page's own <Seo> props.
+ *
+ * In the browser it upserts the same tags on client-side navigation. Every
+ * tag carries data-seo so a route change replaces the previous page's tags
+ * instead of piling them up.
  */
+let ssrSink: ((props: SeoProps) => void) | null = null;
+export function setSeoSink(sink: ((props: SeoProps) => void) | null) {
+  ssrSink = sink;
+}
+
 function upsertMeta(attr: "name" | "property", key: string, content: string) {
   let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
   if (!el) {
@@ -32,15 +44,10 @@ function upsertMeta(attr: "name" | "property", key: string, content: string) {
   el.setAttribute("data-seo", "");
 }
 
-export default function Seo({
-  title,
-  description,
-  path,
-  image,
-  type = "website",
-  publishedTime,
-  schema,
-}: SeoProps) {
+export default function Seo(props: SeoProps) {
+  const { title, description, path, image, type = "website", publishedTime, schema } = props;
+  if (ssrSink) ssrSink(props);
+
   useEffect(() => {
     const url = `${SITE_ORIGIN}${path}`;
     const img = image || DEFAULT_IMAGE;
@@ -69,7 +76,7 @@ export default function Seo({
     }
     canonical.href = url;
 
-    // The worker injects the same schema into the shell at the edge. Drop it
+    // The prerender wrote this page's schema into the static HTML. Drop it
     // before adding the client copy so navigation never leaves two blocks.
     document.head.querySelectorAll("[data-seo-schema]").forEach((el) => el.remove());
 
@@ -91,6 +98,38 @@ export default function Seo({
   }, [title, description, path, image, type, publishedTime, schema]);
 
   return null;
+}
+
+const escapeHtml = (value: string) =>
+  value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/** The same tags as the effect above, as an HTML string for the prerender. */
+export function seoHeadTags(meta: SeoProps): string {
+  const url = `${SITE_ORIGIN}${meta.path}`;
+  const image = meta.image || DEFAULT_IMAGE;
+  const tags = [
+    `<link rel="canonical" href="${escapeHtml(url)}">`,
+    `<meta property="og:title" content="${escapeHtml(meta.title)}" data-seo>`,
+    `<meta property="og:description" content="${escapeHtml(meta.description)}" data-seo>`,
+    `<meta property="og:type" content="${meta.type || "website"}" data-seo>`,
+    `<meta property="og:url" content="${escapeHtml(url)}" data-seo>`,
+    `<meta property="og:image" content="${escapeHtml(image)}" data-seo>`,
+    `<meta property="og:site_name" content="${SITE_NAME}" data-seo>`,
+    `<meta name="twitter:card" content="summary_large_image" data-seo>`,
+    `<meta name="twitter:title" content="${escapeHtml(meta.title)}" data-seo>`,
+    `<meta name="twitter:description" content="${escapeHtml(meta.description)}" data-seo>`,
+    `<meta name="twitter:image" content="${escapeHtml(image)}" data-seo>`,
+    `<meta name="twitter:creator" content="@imusmanbashir" data-seo>`,
+  ];
+  if (meta.publishedTime) {
+    tags.push(`<meta property="article:published_time" content="${escapeHtml(meta.publishedTime)}" data-seo>`);
+  }
+  if (meta.schema) {
+    // "</script>" inside JSON would close the tag early.
+    const json = JSON.stringify(meta.schema).replace(/</g, "\\u003c");
+    tags.push(`<script type="application/ld+json" data-seo-schema>${json}</script>`);
+  }
+  return tags.join("");
 }
 
 export { SITE_NAME, SITE_ORIGIN };

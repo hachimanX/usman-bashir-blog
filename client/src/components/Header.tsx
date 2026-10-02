@@ -13,15 +13,14 @@ const NAV_LINKS = [
 
 export default function Header() {
   const [location] = useLocation();
-  // The inline script in index.html has already resolved and applied the theme
-  // before React boots, so read it back off the element rather than defaulting
-  // to "light" and re-deciding — that produced a flash of the wrong theme.
-  const [theme, setTheme] = useState<"light" | "dark">(() =>
-    typeof document !== "undefined" &&
-    document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light",
-  );
+  // Pages are prerendered, and the server cannot know a visitor's saved theme,
+  // so the first render always assumes the default (dark) and matches the
+  // prerendered HTML. The inline script in index.html has already applied the
+  // real theme to <html> before paint; this only syncs the toggle icon to it.
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+  useEffect(() => {
+    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
+  }, []);
   const [menuOpen, setMenuOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
   const toolsRef = useRef<HTMLDivElement>(null);

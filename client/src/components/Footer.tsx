@@ -1,7 +1,8 @@
 import { Link } from "wouter";
 import Wordmark from "@/components/Wordmark";
 import { LEGAL_DOCS } from "@shared/legal";
-import { Twitter, Linkedin } from "lucide-react";
+import { Linkedin } from "lucide-react";
+import { SiX } from "react-icons/si";
 
 export default function Footer() {
   return (
@@ -38,8 +39,8 @@ export default function Footer() {
             {/* -ml-2.5 pulls the enlarged hit areas back so the icons stay
                 optically aligned with the heading above them. */}
             <div className="mt-2 -ml-2.5 flex gap-1">
-              <a href="https://x.com/imusmanbashir" target="_blank" rel="noopener noreferrer" className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground" aria-label="Twitter / X">
-                <Twitter className="h-5 w-5" aria-hidden="true" />
+              <a href="https://x.com/imusmanbashir" target="_blank" rel="noopener noreferrer" className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground" aria-label="X">
+                <SiX className="h-4 w-4" aria-hidden="true" />
               </a>
               <a href="https://linkedin.com/in/usmanbashir" target="_blank" rel="noopener noreferrer" className="inline-flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground hover:text-foreground" aria-label="LinkedIn">
                 <Linkedin className="h-5 w-5" aria-hidden="true" />

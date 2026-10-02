@@ -28,7 +28,7 @@ export default function About() {
             alt="Usman Bashir"
             width={112}
             height={112}
-            fetchPriority="high"
+            {...{ fetchpriority: "high" }}
             className="h-28 w-28 rounded-full border object-cover"
           />
           <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl">Usman Bashir</h1>

@@ -7,3 +7,9 @@ vite.config.ts.*
 *.tar.gz
 # Row backups written by scripts/import-articles.mjs
 scripts/backups/
+
+# Unpublished articles: kept local so they never reach the public repo
+content/drafts/
+# Generated at build time from content/
+client/src/generated/
+client/public/data/

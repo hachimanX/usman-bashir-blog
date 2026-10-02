@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "dev:api": "wrangler dev",
-    "build": "vite build",
+    "build": "node scripts/build-content.mjs && npm run build:site",
+    "build:drafts": "node scripts/build-content.mjs --drafts && npm run build:site",
+    "build:site": "vite build && vite build --ssr src/entry-server.tsx --outDir ../dist/server --emptyOutDir && node scripts/prerender.mjs",
     "deploy": "npm run build && wrangler deploy",
-    "check": "tsc",
+    "check": "node scripts/build-content.mjs && tsc",
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
@@ -96,6 +98,7 @@
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.31.4",
     "esbuild": "^0.25.0",
+    "markdown-it": "^14.3.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.17",
     "typescript": "5.6.3",

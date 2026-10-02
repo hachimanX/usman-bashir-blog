@@ -22,18 +22,18 @@ export const TOOLS: Tool[] = [
   {
     slug: "trademark-precheck",
     name: "Trademark Pre-Check",
-    blurb: "Search the US trademark register before you commit to a name.",
+    blurb: "Screen brand names across all 45 US trademark classes in seconds.",
     description:
-      "Search the live US federal trademark register for a name or design phrase, narrowed to the product categories that actually apply to you. Free, no signup, results shown here.",
+      "Search the live US federal trademark database before committing to a name or domain. Filter by relevant classes with zero signup, ads, or data collection.",
     pillar: "Business",
     status: "live",
   },
   {
     slug: "pod-profit-calculator",
     name: "Print-on-Demand Profit Calculator",
-    blurb: "Work out what you actually keep after platform fees.",
+    blurb: "Calculate your true net margin after manufacturing, shipping, and platform cuts.",
     description:
-      "Enter your costs and the fees your sales channel charges, and get your real profit per unit, break-even volume and a suggested price.",
+      "Enter your base production costs, shipping, and sales channel fees to see your exact unit margin, break-even volume, and target retail price.",
     pillar: "Print on Demand",
     status: "soon",
   },

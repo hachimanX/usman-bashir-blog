@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import Header from "@/components/Header";
 import Seo, { SITE_ORIGIN } from "@/components/Seo";
@@ -6,6 +5,7 @@ import Footer from "@/components/Footer";
 import TrademarkPrecheck from "@/components/tools/TrademarkPrecheck";
 import { findTool } from "@/lib/tools";
 import { AUTHOR_REF } from "@shared/person";
+import { ARTICLES } from "@/lib/content";
 
 const tool = findTool("trademark-precheck")!;
 
@@ -28,20 +28,10 @@ const RELATED = [
 ];
 
 export default function TrademarkPrecheckPage() {
-  const [publishedSlugs, setPublishedSlugs] = useState<string[] | null>(null);
-
-  useEffect(() => {
-    fetch("/api/posts")
-      .then((r) => r.json())
-      .then((posts: { slug: string }[]) =>
-        setPublishedSlugs(Array.isArray(posts) ? posts.map((p) => p.slug) : []),
-      )
-      .catch(() => setPublishedSlugs([]));
-  }, []);
-
-  const related = RELATED.filter((r) => publishedSlugs?.includes(r.slug));
-
-  return <Page related={related} />;
+  // Only link articles that are actually published: a link to an unpublished
+  // slug ships a 404 that Google finds by crawling this page.
+  const published = new Set(ARTICLES.map((a) => a.slug));
+  return <Page related={RELATED.filter((r) => published.has(r.slug))} />;
 }
 
 function Page({ related }: { related: typeof RELATED }) {

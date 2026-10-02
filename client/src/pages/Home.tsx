@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import type { ComponentType } from "react";
 import { Link } from "wouter";
 import {
   ArrowRight,
@@ -11,7 +11,6 @@ import {
   Megaphone,
   Palette,
   SearchCheck,
-  Twitter,
   type LucideIcon,
 } from "lucide-react";
 import Header from "@/components/Header";
@@ -24,7 +23,8 @@ import { Button } from "@/components/ui/button";
 import { TOOLS } from "@/lib/tools";
 import { PERSON_SCHEMA, PROFILE_LINKS } from "@shared/person";
 import { CONTACT, HERO, HOME_META, RESULTS, WORK_AREAS, type WorkArea } from "@shared/home";
-import type { Post } from "@shared/schema";
+import { SiX } from "react-icons/si";
+import { ARTICLES } from "@/lib/content";
 
 /**
  * The homepage answers one question for someone who just searched the name or
@@ -32,9 +32,9 @@ import type { Post } from "@shared/schema";
  * face first, then the profiles that confirm it, then the work.
  */
 
-const ELSEWHERE: { href: string; label: string; icon: LucideIcon }[] = [
+const ELSEWHERE: { href: string; label: string; icon: ComponentType<{ className?: string }> }[] = [
   { href: PROFILE_LINKS.linkedin, label: "LinkedIn", icon: Linkedin },
-  { href: PROFILE_LINKS.x, label: "X", icon: Twitter },
+  { href: PROFILE_LINKS.x, label: "X", icon: SiX },
   { href: PROFILE_LINKS.startfleet, label: "StartFleet", icon: Briefcase },
   { href: PROFILE_LINKS.bobcat, label: "Bobcat Digital", icon: Palette },
 ];
@@ -55,16 +55,8 @@ const AREA_LAYOUT: Record<WorkArea["key"], string> = {
 };
 
 export default function Home() {
-  const [posts, setPosts] = useState<Post[]>([]);
-
-  useEffect(() => {
-    fetch("/api/posts")
-      .then((r) => r.json())
-      .then((data) => setPosts(Array.isArray(data) ? data : []))
-      .catch(() => {});
-  }, []);
-
-  const latest = posts.slice(0, 3);
+  // Built from content/ at deploy time: no request, no waiting.
+  const latest = ARTICLES.slice(0, 3);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -121,7 +113,7 @@ export default function Home() {
                 alt="Usman Bashir"
                 width={400}
                 height={400}
-                fetchPriority="high"
+                {...{ fetchpriority: "high" }}
                 className="relative aspect-square w-full rounded-[1.75rem] border object-cover"
               />
             </div>
@@ -289,7 +281,7 @@ export default function Home() {
               </h2>
               <ul className="mt-10">
                 {latest.map((post) => (
-                  <li key={post.id} className="border-t last:border-b">
+                  <li key={post.slug} className="border-t last:border-b">
                     <Link
                       href={`/article/${post.slug}`}
                       className="group grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 py-6 sm:grid-cols-[180px_1fr_auto]"
@@ -326,15 +318,15 @@ export default function Home() {
           <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
             <div className="relative overflow-hidden rounded-3xl border bg-card p-8 sm:p-12 lg:p-16">
               <div aria-hidden="true" className="brand-glow pointer-events-none absolute inset-0" />
-              <div className="relative max-w-2xl">
+              <div className="relative">
                 <h2
                   id="contact-heading"
-                  className="pb-1 text-3xl font-semibold leading-[1.1] sm:text-4xl lg:text-5xl"
+                  className="max-w-2xl pb-1 text-3xl font-semibold leading-[1.1] sm:text-4xl lg:text-5xl"
                 >
                   {CONTACT.lead} <span className="accent-word">{CONTACT.accent}</span>
                   {CONTACT.tail && <> {CONTACT.tail}</>}
                 </h2>
-                <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{CONTACT.body}</p>
+                <p className="mt-5 max-w-2xl text-lg leading-relaxed text-muted-foreground">{CONTACT.body}</p>
                 <div className="mt-8 flex flex-wrap items-center gap-3">
                   <span
                     className="inline-flex min-h-11 items-center gap-2 rounded-full border bg-background/60 px-5 font-mono text-sm"
@@ -345,6 +337,11 @@ export default function Home() {
                   <Button asChild size="lg" variant="outline">
                     <a href={PROFILE_LINKS.linkedin} target="_blank" rel="noopener noreferrer">
                       <Linkedin aria-hidden="true" /> Message me on LinkedIn
+                    </a>
+                  </Button>
+                  <Button asChild size="lg" variant="outline">
+                    <a href={PROFILE_LINKS.x} target="_blank" rel="noopener noreferrer">
+                      <SiX aria-hidden="true" /> Message me on X
                     </a>
                   </Button>
                 </div>

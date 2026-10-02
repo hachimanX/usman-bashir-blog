@@ -10,34 +10,19 @@ routes = [
   { pattern = "www.usmanbashir.net", custom_domain = true },
 ]
 
-# Site-wide noindex while the content is being reworked (Oct 2026). Every
-# server-rendered page gets <meta name="robots" content="noindex"> and an
-# X-Robots-Tag header. Set to "false" and redeploy to let Google index again.
-[vars]
-SITE_NOINDEX = "true"
-
-# Static assets serve straight from Cloudflare's edge cache and are not billed
-# as Worker requests. Unmatched paths fall back to index.html so wouter's
-# client-side routes (/admin/*) still resolve.
+# The site is static. `npm run build` prerenders every page into dist/public
+# (see scripts/prerender.mjs), and Cloudflare serves those files from its edge
+# cache: no worker invocation, no database, on any page view.
+#
+# /about is served from about.html, /article/x from article/x.html (the default
+# html_handling resolves extensionless URLs to .html files). Unknown paths get
+# the prerendered 404.html with a real 404 status.
+#
+# Noindex is no longer a variable here: it is SITE_NOINDEX in shared/site.ts,
+# applied at build time as a meta tag and an X-Robots-Tag header.
 [assets]
 directory = "./dist/public"
 binding = "ASSETS"
-not_found_handling = "single-page-application"
-# HTML page routes run through the worker so their <head> can be rewritten with
-# real per-page meta (social scrapers do not execute JS). Hashed assets under
-# /assets/* are deliberately NOT listed, so they still serve straight from the
-# edge cache and are not billed as worker requests.
-run_worker_first = [
-  "/api/*",
-  "/sitemap.xml",
-  "/robots.txt",
-  "/",
-  "/articles",
-  "/about",
-  "/article/*",
-  "/tools",
-  "/tools/*",
-  "/terms",
-  "/privacy",
-  "/affiliate-disclosure",
-]
+not_found_handling = "404-page"
+# Only the newsletter signup endpoint needs the worker.
+run_worker_first = ["/api/*"]

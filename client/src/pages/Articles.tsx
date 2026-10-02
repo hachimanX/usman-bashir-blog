@@ -1,24 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Header from "@/components/Header";
 import Seo from "@/components/Seo";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { Link } from "wouter";
-import type { Post } from "@shared/schema";
-
-function formatDate(d: string | null) {
-  if (!d) return "";
-  return new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}
+import { ARTICLES, formatArticleDate } from "@/lib/content";
 
 export default function Articles() {
-  const [posts, setPosts] = useState<Post[]>([]);
+  // The list ships with the page (built from content/), so it renders at once.
+  const posts = ARTICLES;
   const [searchQuery, setSearchQuery] = useState("");
-
-  useEffect(() => {
-    fetch("/api/posts").then((r) => r.json()).then(setPosts).catch(() => {});
-  }, []);
 
   const filtered = posts.filter(
     (p) =>
@@ -62,17 +54,12 @@ export default function Articles() {
                 <p className="mb-6 text-sm text-muted-foreground">{filtered.length} {filtered.length === 1 ? "article" : "articles"}</p>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((post) => (
-                    <Link key={post.id} href={`/article/${post.slug}`} className="group block overflow-hidden rounded-2xl border bg-card transition-colors hover:border-primary">
-                      {post.coverImage && (
-                        <div className="aspect-video overflow-hidden">
-                          <img src={post.coverImage} alt={post.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                        </div>
-                      )}
+                    <Link key={post.slug} href={`/article/${post.slug}`} className="group block overflow-hidden rounded-2xl border bg-card transition-colors hover:border-primary">
                       <div className="p-5">
                         <span className="text-xs font-semibold uppercase tracking-wide text-primary">{post.category}</span>
                         <h3 className="mt-2 font-bold leading-tight group-hover:text-primary transition-colors">{post.title}</h3>
                         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
-                        <p className="mt-3 text-xs text-muted-foreground">{formatDate(post.publishedAt as any)} · {post.readTime}</p>
+                        <p className="mt-3 text-xs text-muted-foreground">{formatArticleDate(post.date)} · {post.readTime}</p>
                       </div>
                     </Link>
                   ))}
