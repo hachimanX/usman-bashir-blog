@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
+import Seo from "@/components/Seo";
 import Footer from "@/components/Footer";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
@@ -28,8 +29,13 @@ export default function Articles() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <Seo
+        title="All Articles — Usman Bashir"
+        description="Every article: SEO, print-on-demand, digital marketing, and US business setup. Practical write-ups from real projects."
+        path="/articles"
+      />
       <Header />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <section className="border-b py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <h1 className="text-4xl font-bold sm:text-5xl">All Articles</h1>
@@ -56,7 +62,7 @@ export default function Articles() {
                 <p className="mb-6 text-sm text-muted-foreground">{filtered.length} {filtered.length === 1 ? "article" : "articles"}</p>
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                   {filtered.map((post) => (
-                    <Link key={post.id} href={`/article/${post.slug}`} className="group block overflow-hidden rounded-lg border transition-shadow hover:shadow-lg">
+                    <Link key={post.id} href={`/article/${post.slug}`} className="group block overflow-hidden rounded-2xl border bg-card transition-colors hover:border-primary">
                       {post.coverImage && (
                         <div className="aspect-video overflow-hidden">
                           <img src={post.coverImage} alt={post.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />

@@ -1,6 +1,6 @@
-import { users, posts } from "@shared/schema";
+import { users, posts, subscribers } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
-import type { User, InsertUser, Post, InsertPost, UpdatePost } from "@shared/schema";
+import type { User, InsertUser, Post, InsertPost, UpdatePost, Subscriber } from "@shared/schema";
 import type { Database } from "./db";
 
 export interface IStorage {
@@ -13,6 +13,8 @@ export interface IStorage {
   createPost(post: InsertPost): Promise<Post>;
   updatePost(id: string, post: UpdatePost): Promise<Post | undefined>;
   deletePost(id: string): Promise<void>;
+  addSubscriber(email: string): Promise<void>;
+  getSubscribers(): Promise<Subscriber[]>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -68,6 +70,17 @@ export class DatabaseStorage implements IStorage {
 
   async deletePost(id: string): Promise<void> {
     await this.db.delete(posts).where(eq(posts.id, id));
+  }
+
+  // Re-subscribing with an existing address is a no-op rather than an error, so
+  // the endpoint can stay idempotent and never leak whether an address is on
+  // the list.
+  async addSubscriber(email: string): Promise<void> {
+    await this.db.insert(subscribers).values({ email }).onConflictDoNothing();
+  }
+
+  async getSubscribers(): Promise<Subscriber[]> {
+    return this.db.select().from(subscribers).orderBy(desc(subscribers.createdAt));
   }
 }
 

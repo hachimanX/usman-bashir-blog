@@ -2,15 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <title>Usman Bashir - Digital Marketing & SEO Insights</title>
-    <meta name="description" content="In-depth articles on SEO, digital marketing, and content strategy by Usman Bashir. Practical insights from years of experience in the field." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The app-icon variant of the UB mark: the 3D logo used in the header
+         turns to mush at 16px, this one stays legible. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" href="/favicon.png" sizes="128x128" />
+    <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Usman Bashir | SEO, Marketing and Building with AI</title>
+    <meta name="description" content="I'm Usman Bashir. I work in SEO and marketing, and I build apps and tools with AI." />
+    <!-- Night Ink, the dark --background token. The site defaults to dark, so
+         the browser chrome matches it regardless of the OS setting. -->
+    <meta name="theme-color" content="#0A1120" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Allura&display=swap" rel="stylesheet">
+    <!-- Bricolage Grotesque (headings), Geist (body), Geist Mono (labels) and
+         Newsreader italic (one accent word per headline). Only the weights the
+         CSS actually uses are requested. -->
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@1,6..72,400&display=swap" rel="stylesheet">
+    <script>
+      // Theme is applied before first paint. Doing this in React's useEffect meant
+      // every dark-mode visitor got a white flash on load. Dark is the brand
+      // default; light only applies once a visitor picks it with the toggle.
+      (function () {
+        try {
+          var saved = localStorage.getItem("theme");
+          var dark = saved ? saved === "dark" : true;
+          document.documentElement.classList.toggle("dark", dark);
+          document.documentElement.style.colorScheme = dark ? "dark" : "light";
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-background focus:px-4 focus:py-2 focus:text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+      >Skip to content</a
+    >
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

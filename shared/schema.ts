@@ -27,6 +27,13 @@ export const posts = pgTable("posts", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const subscribers = pgTable("subscribers", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  email: text("email").notNull().unique(),
+  source: text("source").notNull().default("site"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({ username: true, password: true });
 export const insertPostSchema = createInsertSchema(posts).omit({ id: true, createdAt: true, updatedAt: true });
 export const updatePostSchema = insertPostSchema.partial();
@@ -36,3 +43,8 @@ export type User = typeof users.$inferSelect;
 export type InsertPost = z.infer<typeof insertPostSchema>;
 export type UpdatePost = z.infer<typeof updatePostSchema>;
 export type Post = typeof posts.$inferSelect;
+
+export const subscribeSchema = z.object({
+  email: z.string().trim().toLowerCase().email().max(254),
+});
+export type Subscriber = typeof subscribers.$inferSelect;

@@ -1,5 +1,28 @@
 # Design Guidelines for usmanbashir.net
 
+## Brand (October 2026). This section overrides anything below it.
+
+The site is an identity site first: someone who searched "Usman Bashir" or clicked an email
+signature should see a real, checkable person. Improve this site; do not rebuild it.
+
+- **Theme:** dark by default (`client/index.html` sets it before paint). Light exists only for
+  visitors who toggle.
+- **Colours** are tokens in `client/src/index.css`. Night Ink `#0A1120` ground, Frost `#E6EDF7`
+  text, Slate Mist `#9AA8BF` muted text, and one accent: Signal Aqua `#3CC6F2` (deep blue
+  `#0F6AB8` in light mode). Ocean `#1A7BD4` appears only as the second stop in gradients.
+  Never add a second accent colour.
+- **Type:** Bricolage Grotesque for h1-h3 (applied globally), Geist for body, Geist Mono for
+  small labels, Newsreader italic for at most one accent word per headline (`.accent-word`).
+- **Shapes:** buttons and pills fully round, cards 16px (`rounded-2xl`).
+- **Helpers:** `.brand-glow` (soft wash), `.brand-mark` (gradient: UB mark, portrait halo),
+  `.surface-grid` (faded graph-paper texture).
+- **Identity data** lives in `shared/person.ts` (Person schema, full legal name as
+  `alternateName`, profile links). Homepage copy lives in `shared/home.ts`, which both the
+  React page and the worker's crawler HTML read.
+
+The sections below are the original Replit-era brief. Where they conflict with the above
+(Inter, light cards, "no hero image"), the above wins.
+
 ## Design Approach
 
 **Reference-Based Approach**: Inspired by Detailed.com's clean, content-first aesthetic

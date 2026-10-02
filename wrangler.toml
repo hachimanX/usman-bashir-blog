@@ -10,10 +10,34 @@ routes = [
   { pattern = "www.usmanbashir.net", custom_domain = true },
 ]
 
-# Everything that isn't /api/* is served straight from Cloudflare's edge cache
-# and is not billed as a Worker request. Unmatched paths fall back to index.html
-# so wouter's client-side routes (/articles/:slug, /admin/*) resolve.
+# Site-wide noindex while the content is being reworked (Oct 2026). Every
+# server-rendered page gets <meta name="robots" content="noindex"> and an
+# X-Robots-Tag header. Set to "false" and redeploy to let Google index again.
+[vars]
+SITE_NOINDEX = "true"
+
+# Static assets serve straight from Cloudflare's edge cache and are not billed
+# as Worker requests. Unmatched paths fall back to index.html so wouter's
+# client-side routes (/admin/*) still resolve.
 [assets]
 directory = "./dist/public"
+binding = "ASSETS"
 not_found_handling = "single-page-application"
-run_worker_first = ["/api/*"]
+# HTML page routes run through the worker so their <head> can be rewritten with
+# real per-page meta (social scrapers do not execute JS). Hashed assets under
+# /assets/* are deliberately NOT listed, so they still serve straight from the
+# edge cache and are not billed as worker requests.
+run_worker_first = [
+  "/api/*",
+  "/sitemap.xml",
+  "/robots.txt",
+  "/",
+  "/articles",
+  "/about",
+  "/article/*",
+  "/tools",
+  "/tools/*",
+  "/terms",
+  "/privacy",
+  "/affiliate-disclosure",
+]

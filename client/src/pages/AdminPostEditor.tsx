@@ -2,6 +2,10 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation, useRoute } from "wouter";
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import Table from "@tiptap/extension-table";
+import TableRow from "@tiptap/extension-table-row";
+import TableHeader from "@tiptap/extension-table-header";
+import TableCell from "@tiptap/extension-table-cell";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -18,9 +22,13 @@ import {
   ArrowLeft, Save, Eye, EyeOff, Upload, Sun, Moon
 } from "lucide-react";
 
+// Mirrors the content pillars in content-plan.md. Categories the uploader sends
+// must exist here or the Select renders blank.
 const CATEGORIES = [
+  "Print on Demand",
+  "US LLC & Business Setup",
+  "AI & Marketing",
   "SEO & Digital Marketing",
-  "Business & Startups",
   "Design & Creative",
   "Tutorials & Reviews",
   "General",
@@ -68,6 +76,13 @@ export default function AdminPostEditor() {
         HTMLAttributes: { target: "_blank", rel: "noopener noreferrer" },
       }),
       Placeholder.configure({ placeholder: "Start writing your article here…" }),
+      // Without these, TipTap has no schema node for <table> and silently drops
+      // the element on load, leaving every cell concatenated into one paragraph.
+      // Comparison tables are the backbone of most articles here, so they matter.
+      Table.configure({ resizable: false, HTMLAttributes: { class: "article-table" } }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     editorProps: {
       attributes: { class: "prose prose-lg dark:prose-invert max-w-none min-h-[400px] focus:outline-none px-1" },

@@ -5,3 +5,5 @@ dist
 .dev.vars
 vite.config.ts.*
 *.tar.gz
+# Row backups written by scripts/import-articles.mjs
+scripts/backups/
