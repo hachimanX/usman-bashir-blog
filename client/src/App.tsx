@@ -9,6 +9,8 @@ import About from "@/pages/About";
 import Article from "@/pages/Article";
 import Tools from "@/pages/Tools";
 import TrademarkPrecheckPage from "@/pages/tools/TrademarkPrecheckPage";
+import SerpPreviewPage from "@/pages/tools/SerpPreviewPage";
+import EeatSchemaGeneratorPage from "@/pages/tools/EeatSchemaGeneratorPage";
 import Legal from "@/pages/Legal";
 import NotFound from "@/pages/not-found";
 
@@ -24,6 +26,8 @@ function Router() {
           component, and an unknown /tools/* slug should 404 rather than render
           an empty shell. */}
       <Route path="/tools/trademark-precheck" component={TrademarkPrecheckPage} />
+      <Route path="/tools/serp-preview" component={SerpPreviewPage} />
+      <Route path="/tools/eeat-schema-generator" component={EeatSchemaGeneratorPage} />
       <Route path="/terms">{() => <Legal slug="terms" />}</Route>
       <Route path="/privacy">{() => <Legal slug="privacy" />}</Route>
       <Route path="/affiliate-disclosure">{() => <Legal slug="affiliate-disclosure" />}</Route>

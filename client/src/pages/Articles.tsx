@@ -23,7 +23,7 @@ export default function Articles() {
     <div className="flex min-h-screen flex-col">
       <Seo
         title="All Articles — Usman Bashir"
-        description="Every article: SEO, print-on-demand, digital marketing, and US business setup. Practical write-ups from real projects."
+        description="Every article: SEO, digital marketing, AI tools, and US business setup. Practical write-ups from real projects."
         path="/articles"
       />
       <Header />

@@ -39,11 +39,6 @@ const TOPIC_ENTITIES = [
   },
   {
     "@type": "Thing",
-    name: "Print on demand",
-    sameAs: "https://en.wikipedia.org/wiki/Print_on_demand",
-  },
-  {
-    "@type": "Thing",
     name: "Limited liability company",
     sameAs: "https://en.wikipedia.org/wiki/Limited_liability_company",
   },

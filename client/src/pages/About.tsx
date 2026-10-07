@@ -11,7 +11,7 @@ export default function About() {
     <div className="flex min-h-screen flex-col">
       <Seo
         title="About Usman Bashir — SEO & Digital Marketing"
-        description="SEO and content practitioner at StartFleet, MBA graduate, and owner of Bobcat Digital LLC. Writing about search, print-on-demand, and US company setup."
+        description="SEO and content practitioner at StartFleet, MBA graduate, and owner of Bobcat Digital LLC. Writing about search, marketing, and US company setup."
         path="/about"
         schema={PROFILE_PAGE_SCHEMA}
       />
@@ -65,7 +65,7 @@ export default function About() {
             </p>
             <p>
               This site is separate from both. It is where I write up what I am actually testing:
-              SEO and marketing, search rankings, print-on-demand, US company setup, business
+              SEO and marketing, search rankings, US company setup, business
               writing, gaming, and whatever else is worth the time. Including the parts that did
               not work.
             </p>

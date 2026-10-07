@@ -65,7 +65,7 @@ const PRESETS: { label: string; classes: number[] }[] = [
   { label: "Software or app", classes: [9, 42] },
   { label: "Agency or consulting", classes: [35, 41, 42] },
   { label: "Online store or retail", classes: [35] },
-  { label: "Apparel & print-on-demand", classes: [25, 16, 21, 18, 24, 9] },
+  { label: "Apparel & merchandise", classes: [25, 16, 21, 18, 24, 9] },
   { label: "Food & drink", classes: [29, 30, 32, 43] },
   { label: "Cosmetics & skincare", classes: [3, 5, 44] },
   { label: "Jewellery & accessories", classes: [14, 18, 25] },

@@ -14,7 +14,7 @@ export type Tool = {
   /** Longer description for the tool page's own intro and meta description. */
   description: string;
   /** Which content pillar it supports — used for grouping once there are more. */
-  pillar: "Business" | "Print on Demand" | "SEO";
+  pillar: "Business" | "SEO" | "Marketing";
   status: "live" | "soon";
 };
 
@@ -22,20 +22,29 @@ export const TOOLS: Tool[] = [
   {
     slug: "trademark-precheck",
     name: "Trademark Pre-Check",
-    blurb: "Screen brand names across all 45 US trademark classes in seconds.",
+    blurb: "Search the US trademark register before you commit to a name.",
     description:
-      "Search the live US federal trademark database before committing to a name or domain. Filter by relevant classes with zero signup, ads, or data collection.",
+      "Search the live US federal trademark register for a name or design phrase, narrowed to the product categories that actually apply to you. Free, no signup, results shown here.",
     pillar: "Business",
     status: "live",
   },
   {
-    slug: "pod-profit-calculator",
-    name: "Print-on-Demand Profit Calculator",
-    blurb: "Calculate your true net margin after manufacturing, shipping, and platform cuts.",
+    slug: "serp-preview",
+    name: "Google SERP & Snippet Preview",
+    blurb: "Test title and description pixel widths with real-time desktop and mobile simulation.",
     description:
-      "Enter your base production costs, shipping, and sales channel fees to see your exact unit margin, break-even volume, and target retail price.",
-    pillar: "Print on Demand",
-    status: "soon",
+      "Preview how your page looks in Google search results with true pixel-width truncation, mobile and desktop layouts, query bolding, and rich snippet badges.",
+    pillar: "SEO",
+    status: "live",
+  },
+  {
+    slug: "eeat-schema-generator",
+    name: "E-E-A-T Author & Article Schema Studio",
+    blurb: "Generate connected Person and Article JSON-LD with verified social proof.",
+    description:
+      "Generate valid Schema.org structured data connecting authors to verified authority profiles and Wikipedia knowledge topics for Google E-E-A-T signals.",
+    pillar: "SEO",
+    status: "live",
   },
 ];
 

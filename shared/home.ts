@@ -4,17 +4,17 @@
  * Edit the wording in this file and both stay in step.
  */
 export const HOME_META = {
-  title: "Usman Bashir | SEO, Content & AI-Built Tools",
+  title: "Usman Bashir | SEO, Marketing and Building with AI",
   description:
-    "I'm Usman Bashir. I help online businesses grow search traffic with articles that rank and free tools built with AI. Real data, battle-tested strategies, zero fluff.",
+    "I'm Usman Bashir. I work in SEO and marketing, and I build apps and tools with AI. What I've built, what I've written, and how to reach me.",
 };
 
 // Headlines are split so the React page can set the accent word in italic.
 // The worker joins the parts back into one plain sentence.
 export const HERO = {
-  lead: "I help businesses grow organic search traffic with high-ranking content and tools built",
+  lead: "I work in SEO and marketing, and I build apps and tools",
   accent: "with AI.",
-  sub: "No fluff, no vanity metrics. Just clear keyword strategies, honest articles that rank, and free tools people actually bookmark.",
+  sub: "This is where I keep what I build and what I learn, including the parts that didn't work.",
 };
 
 export type WorkArea = {
@@ -26,23 +26,23 @@ export type WorkArea = {
 export const WORK_AREAS: WorkArea[] = [
   {
     key: "seo",
-    title: "SEO & Organic Content",
-    body: "I focus on high-intent keywords and content that directly answers what buyers type into Google. Since 2020, I've run SEO across ecommerce, SaaS, and service sites—currently leading content and organic search at StartFleet.",
+    title: "SEO and content",
+    body: "I've worked in SEO since 2020, mostly on WordPress, ecommerce and service sites. These days I run content and SEO at StartFleet, which helps people outside the US set up American companies.",
   },
   {
     key: "pr",
-    title: "Digital PR & Outreach",
-    body: "Earning genuine coverage and links on publications people already read. Effective outreach isn't cold email blast spam; it starts with creating assets that editors and writers genuinely want to cite.",
+    title: "Digital PR and outreach",
+    body: "Getting brands mentioned on sites people already read. It goes a lot better when there's something worth mentioning first.",
   },
   {
     key: "design",
-    title: "Marketing & Content Strategy",
-    body: "Through my agency, Bobcat Digital, we help brands with marketing strategy, content systems, and creative storefronts. I direct the growth and content side, helping ecommerce and service businesses attract search traffic and convert visitors into buyers.",
+    title: "Marketing and design",
+    body: "Through Bobcat Digital I help brands with marketing and graphic design, from ecommerce storefronts to apparel graphics.",
   },
   {
     key: "ai",
     title: "Building with AI",
-    body: "I build fast, interactive web tools and calculators with AI, then audit and refine every line by hand. Useful utility tools attract backlinks naturally, solve real user problems, and drive compounding search traffic.",
+    body: "I build apps, tools and websites with AI, then check the work by hand. A few are public on this site. Most are private experiments, and what I learn from them ends up in my writing.",
   },
 ];
 
@@ -52,7 +52,7 @@ export const WORK_AREAS: WorkArea[] = [
  * blurred). Only screenshots he remembers the project for go here.
  */
 export const RESULTS = {
-  intro: "Recent organic performance from campaigns I've managed. Client domains and proprietary metrics are kept confidential.",
+  intro: "From projects I've worked on. Names and domains are left out on purpose.",
   gsc: {
     value: "70K",
     label: "clicks from Google Search in 28 days",
@@ -70,8 +70,8 @@ export const RESULTS = {
 };
 
 export const CONTACT = {
-  lead: "Let's talk about your",
-  accent: "growth",
+  lead: "Get in",
+  accent: "touch",
   tail: "",
-  body: "Whether you want to audit an underperforming site, build high-ranking content, or discuss an SEO project, send me a message. If I'm not the right fit for your goals, I'll tell you honestly.",
+  body: "Email is the quickest way to reach me. LinkedIn works too.",
 };

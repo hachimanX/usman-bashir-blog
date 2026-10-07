@@ -20,11 +20,6 @@ const RELATED = [
     title: "The best LLC formation services, compared",
     note: "a state approving your company name is not the same as nobody owning it.",
   },
-  {
-    slug: "how-to-start-print-on-demand-business",
-    title: "How to start a print-on-demand business",
-    note: "the trademark section is the one that closes shops.",
-  },
 ];
 
 export default function TrademarkPrecheckPage() {
