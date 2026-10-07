@@ -33,53 +33,48 @@ const SUGGESTED_TOPICS = [
   { name: "Personal finance", wiki: "https://en.wikipedia.org/wiki/Personal_finance" },
 ];
 
+export type ArticleEntry = {
+  id: string;
+  headline: string;
+  url: string;
+  datePublished: string;
+  dateModified: string;
+  description: string;
+};
+
 export default function EeatSchemaGenerator() {
   const { toast } = useToast();
 
-  // Author details
-  const [name, setName] = useState("Usman Bashir");
-  const [alternateName, setAlternateName] = useState("Muhammad Usman Bashir");
-  const [jobTitle, setJobTitle] = useState("SEO and Content Practitioner");
-  const [siteUrl, setSiteUrl] = useState("https://usmanbashir.net");
-  const [bioUrl, setBioUrl] = useState("https://usmanbashir.net/about");
-  const [imageUrl, setImageUrl] = useState("https://usmanbashir.net/usman.jpg");
+  // Author details - EMPTY by default (NO personal details)
+  const [name, setName] = useState("");
+  const [alternateName, setAlternateName] = useState("");
+  const [jobTitle, setJobTitle] = useState("");
+  const [siteUrl, setSiteUrl] = useState("");
+  const [bioUrl, setBioUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
 
-  // Affiliations
-  const [companyName, setCompanyName] = useState("StartFleet");
-  const [companyUrl, setCompanyUrl] = useState("https://startfleet.io");
-  const [hasOwnedOrg, setHasOwnedOrg] = useState(true);
-  const [ownedOrgName, setOwnedOrgName] = useState("Bobcat Digital LLC");
-  const [ownedOrgUrl, setOwnedOrgUrl] = useState("https://bobcatdigital.co");
+  // Affiliations - EMPTY by default
+  const [companyName, setCompanyName] = useState("");
+  const [companyUrl, setCompanyUrl] = useState("");
+  const [hasOwnedOrg, setHasOwnedOrg] = useState(false);
+  const [ownedOrgName, setOwnedOrgName] = useState("");
+  const [ownedOrgUrl, setOwnedOrgUrl] = useState("");
 
-  // sameAs authority links
-  const [sameAsLinks, setSameAsLinks] = useState<string[]>([
-    "https://linkedin.com/in/usmanbashir",
-    "https://x.com/imusmanbashir",
-  ]);
+  // sameAs authority links - EMPTY by default
+  const [sameAsLinks, setSameAsLinks] = useState<string[]>([]);
   const [newSameAs, setNewSameAs] = useState("");
 
-  // knowsAbout topics
-  const [topics, setTopics] = useState<{ name: string; wiki?: string }[]>([
-    { name: "Search engine optimization", wiki: "https://en.wikipedia.org/wiki/Search_engine_optimization" },
-    { name: "Content marketing", wiki: "https://en.wikipedia.org/wiki/Content_marketing" },
-    { name: "Artificial intelligence", wiki: "https://en.wikipedia.org/wiki/Artificial_intelligence" },
-  ]);
+  // knowsAbout topics - EMPTY by default
+  const [topics, setTopics] = useState<{ name: string; wiki?: string }[]>([]);
   const [customTopicName, setCustomTopicName] = useState("");
   const [customTopicWiki, setCustomTopicWiki] = useState("");
 
-  // Article schema extension
-  const [includeArticle, setIncludeArticle] = useState(true);
-  const [articleHeadline, setArticleHeadline] = useState("Claude vs ChatGPT for Writing: I Tested Both on Real Work");
-  const [articleUrl, setArticleUrl] = useState("https://usmanbashir.net/article/claude-vs-chatgpt-for-writing");
-  const [articleDatePublished, setArticleDatePublished] = useState("2026-10-02T13:11:42Z");
-  const [articleDateModified, setArticleDateModified] = useState("2026-10-02T13:11:42Z");
-  const [articleDescription, setArticleDescription] = useState(
-    "Tested both tools on real client work. Here is where each AI assistant wins.",
-  );
+  // Multiple Articles Schema
+  const [articles, setArticles] = useState<ArticleEntry[]>([]);
 
   const [copied, setCopied] = useState(false);
 
-  // Handlers for lists
+  // Handlers for sameAs
   const handleAddSameAs = () => {
     if (!newSameAs.trim()) return;
     setSameAsLinks([...sameAsLinks, newSameAs.trim()]);
@@ -90,6 +85,7 @@ export default function EeatSchemaGenerator() {
     setSameAsLinks(sameAsLinks.filter((_, i) => i !== idx));
   };
 
+  // Handlers for topics
   const handleAddSuggestedTopic = (topic: { name: string; wiki: string }) => {
     if (topics.some((t) => t.name.toLowerCase() === topic.name.toLowerCase())) return;
     setTopics([...topics, topic]);
@@ -106,9 +102,33 @@ export default function EeatSchemaGenerator() {
     setTopics(topics.filter((_, i) => i !== idx));
   };
 
+  // Handlers for Articles
+  const handleAddArticle = () => {
+    const newEntry: ArticleEntry = {
+      id: Math.random().toString(36).slice(2, 9),
+      headline: "",
+      url: "",
+      datePublished: new Date().toISOString().slice(0, 10),
+      dateModified: new Date().toISOString().slice(0, 10),
+      description: "",
+    };
+    setArticles([...articles, newEntry]);
+  };
+
+  const handleUpdateArticle = (id: string, field: keyof ArticleEntry, value: string) => {
+    setArticles(
+      articles.map((art) => (art.id === id ? { ...art, [field]: value } : art)),
+    );
+  };
+
+  const handleRemoveArticle = (id: string) => {
+    setArticles(articles.filter((art) => art.id !== id));
+  };
+
   // Generate valid JSON-LD graph
   const jsonLdGraph = useMemo(() => {
-    const cleanOrigin = siteUrl.replace(/\/+$/, "");
+    const rawOrigin = siteUrl.trim() || "https://example.com";
+    const cleanOrigin = rawOrigin.replace(/\/+$/, "");
     const personId = `${cleanOrigin}/#person`;
 
     const topicEntities = topics.map((t) => {
@@ -164,45 +184,57 @@ export default function EeatSchemaGenerator() {
       personEntity.sameAs = validSameAs;
     }
 
-    if (!includeArticle) {
+    // If no articles added, return Person entity
+    if (articles.length === 0) {
       return {
         "@context": "https://schema.org",
         ...personEntity,
       };
     }
 
-    // Combined Graph with Article linked to Person @id
-    const articleEntity: Record<string, any> = {
-      "@type": "BlogPosting",
-      "@id": `${articleUrl.trim()}#article`,
-      headline: articleHeadline.trim() || "Article Headline",
-      url: articleUrl.trim(),
-      description: articleDescription.trim(),
-      datePublished: articleDatePublished.trim(),
-      dateModified: articleDateModified.trim() || articleDatePublished.trim(),
-      mainEntityOfPage: {
-        "@type": "WebPage",
-        "@id": articleUrl.trim(),
-      },
-      author: {
-        "@type": "Person",
-        "@id": personId,
-        name: name.trim() || "Author Name",
-        url: bioUrl.trim() || cleanOrigin,
-      },
-    };
-
-    if (companyName.trim()) {
-      articleEntity.publisher = {
-        "@type": "Organization",
-        name: companyName.trim(),
-        ...(companyUrl.trim() ? { url: companyUrl.trim() } : {}),
+    // Build Article entities connected to this person
+    const articleEntities = articles.map((art) => {
+      const artUrl = art.url.trim() || `${cleanOrigin}/article`;
+      const entity: Record<string, any> = {
+        "@type": "BlogPosting",
+        "@id": `${artUrl}#article`,
+        headline: art.headline.trim() || "Article Headline",
+        url: artUrl,
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": artUrl,
+        },
+        author: {
+          "@type": "Person",
+          "@id": personId,
+          name: name.trim() || "Author Name",
+          url: bioUrl.trim() || cleanOrigin,
+        },
       };
-    }
+
+      if (art.description.trim()) {
+        entity.description = art.description.trim();
+      }
+      if (art.datePublished.trim()) {
+        entity.datePublished = art.datePublished.trim();
+      }
+      if (art.dateModified.trim()) {
+        entity.dateModified = art.dateModified.trim();
+      }
+      if (companyName.trim()) {
+        entity.publisher = {
+          "@type": "Organization",
+          name: companyName.trim(),
+          ...(companyUrl.trim() ? { url: companyUrl.trim() } : {}),
+        };
+      }
+
+      return entity;
+    });
 
     return {
       "@context": "https://schema.org",
-      "@graph": [personEntity, articleEntity],
+      "@graph": [personEntity, ...articleEntities],
     };
   }, [
     name,
@@ -218,12 +250,7 @@ export default function EeatSchemaGenerator() {
     ownedOrgUrl,
     sameAsLinks,
     topics,
-    includeArticle,
-    articleHeadline,
-    articleUrl,
-    articleDatePublished,
-    articleDateModified,
-    articleDescription,
+    articles,
   ]);
 
   const jsonString = useMemo(() => JSON.stringify(jsonLdGraph, null, 2), [jsonLdGraph]);
@@ -232,13 +259,13 @@ export default function EeatSchemaGenerator() {
   // E-E-A-T Quality Score calculation
   const checklist = useMemo(() => {
     return [
-      { label: "Unique @id Entity Anchor", passed: Boolean(siteUrl.trim()), tip: "Prevents duplicate entity resolution in Google's index." },
-      { label: "Authoritative sameAs Profiles", passed: sameAsLinks.length >= 2, tip: "At least 2 profiles (LinkedIn, X, GitHub) confirming identity." },
-      { label: "Wikidata/Wikipedia Entity Topics", passed: topics.some((t) => Boolean(t.wiki)), tip: "Connects author expertise directly to the Knowledge Graph." },
+      { label: "Unique @id Entity Anchor", passed: Boolean(siteUrl.trim()), tip: "Assigns persistent Knowledge Graph identity." },
+      { label: "Authoritative sameAs Profiles", passed: sameAsLinks.length >= 2, tip: "At least 2 profiles (LinkedIn, X, etc.) verifying personhood." },
+      { label: "Wikidata/Wikipedia Entity Topics", passed: topics.some((t) => Boolean(t.wiki)), tip: "Connects author expertise directly to recognized concepts." },
       { label: "Employer or Publisher Affiliation", passed: Boolean(companyName.trim()), tip: "Signals legitimate organization ties and accountability." },
-      { label: "Direct Byline Anchor in Article", passed: includeArticle, tip: "Article author points directly at the Person entity." },
+      { label: "Linked Articles Connected", passed: articles.length > 0, tip: "Bylines connect to Person entity via @id." },
     ];
-  }, [siteUrl, sameAsLinks, topics, companyName, includeArticle]);
+  }, [siteUrl, sameAsLinks, topics, companyName, articles]);
 
   const passedCount = checklist.filter((c) => c.passed).length;
 
@@ -256,25 +283,58 @@ export default function EeatSchemaGenerator() {
     window.open("https://search.google.com/test/rich-results", "_blank", "noopener,noreferrer");
   };
 
-  const handleResetSample = () => {
-    setName("Usman Bashir");
-    setAlternateName("Muhammad Usman Bashir");
-    setJobTitle("SEO and Content Practitioner");
-    setSiteUrl("https://usmanbashir.net");
-    setBioUrl("https://usmanbashir.net/about");
-    setImageUrl("https://usmanbashir.net/usman.jpg");
-    setCompanyName("StartFleet");
-    setCompanyUrl("https://startfleet.io");
-    setHasOwnedOrg(true);
-    setOwnedOrgName("Bobcat Digital LLC");
-    setOwnedOrgUrl("https://bobcatdigital.co");
-    setSameAsLinks(["https://linkedin.com/in/usmanbashir", "https://x.com/imusmanbashir"]);
+  const handleClearAll = () => {
+    setName("");
+    setAlternateName("");
+    setJobTitle("");
+    setSiteUrl("");
+    setBioUrl("");
+    setImageUrl("");
+    setCompanyName("");
+    setCompanyUrl("");
+    setHasOwnedOrg(false);
+    setOwnedOrgName("");
+    setOwnedOrgUrl("");
+    setSameAsLinks([]);
+    setTopics([]);
+    setArticles([]);
+  };
+
+  const handleLoadGenericSample = () => {
+    setName("Sarah Jenkins");
+    setAlternateName("Sarah J. Jenkins");
+    setJobTitle("Head of Content Strategy");
+    setSiteUrl("https://example.com");
+    setBioUrl("https://example.com/about/sarah");
+    setImageUrl("https://example.com/images/sarah.jpg");
+    setCompanyName("Acme Media Corp");
+    setCompanyUrl("https://example.com");
+    setHasOwnedOrg(false);
+    setOwnedOrgName("");
+    setOwnedOrgUrl("");
+    setSameAsLinks(["https://linkedin.com/in/example-author", "https://x.com/example_author"]);
     setTopics([
       { name: "Search engine optimization", wiki: "https://en.wikipedia.org/wiki/Search_engine_optimization" },
       { name: "Content marketing", wiki: "https://en.wikipedia.org/wiki/Content_marketing" },
-      { name: "Artificial intelligence", wiki: "https://en.wikipedia.org/wiki/Artificial_intelligence" },
     ]);
-    setIncludeArticle(true);
+    setArticles([
+      {
+        id: "art-1",
+        headline: "How Search Intent Reshaped Modern SEO",
+        url: "https://example.com/blog/search-intent-seo",
+        datePublished: "2026-09-15",
+        dateModified: "2026-10-01",
+        description: "A comprehensive breakdown of how search algorithms identify and satisfy search intent.",
+      },
+      {
+        id: "art-2",
+        headline: "10 Editorial Rules for High-Ranking Articles",
+        url: "https://example.com/blog/editorial-seo-rules",
+        datePublished: "2026-09-28",
+        dateModified: "2026-10-05",
+        description: "Actionable frameworks for researching and writing authoritative content.",
+      },
+    ]);
   };
 
   return (
@@ -291,15 +351,18 @@ export default function EeatSchemaGenerator() {
               Evaluates structured data completeness against Google Search Quality Rater Guidelines.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Badge
               variant={passedCount === 5 ? "default" : passedCount >= 3 ? "secondary" : "outline"}
               className="text-sm px-3 py-1 font-mono"
             >
               Score: {passedCount} / 5 passed
             </Badge>
-            <Button variant="ghost" size="sm" onClick={handleResetSample} className="rounded-full text-xs gap-1">
-              <RotateCcw className="h-3 w-3" /> Reset
+            <Button variant="outline" size="sm" onClick={handleLoadGenericSample} className="rounded-full text-xs">
+              Load Sample Data
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleClearAll} className="rounded-full text-xs gap-1">
+              <RotateCcw className="h-3 w-3" /> Clear All
             </Button>
           </div>
         </div>
@@ -333,7 +396,7 @@ export default function EeatSchemaGenerator() {
               <Sparkles className="h-4 w-4" /> 2. Authority & Topics
             </TabsTrigger>
             <TabsTrigger value="article" className="gap-2 text-xs sm:text-sm">
-              <BookOpen className="h-4 w-4" /> 3. Article Link
+              <BookOpen className="h-4 w-4" /> 3. Articles ({articles.length})
             </TabsTrigger>
           </TabsList>
 
@@ -346,7 +409,7 @@ export default function EeatSchemaGenerator() {
                   id="author-name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Usman Bashir"
+                  placeholder="e.g. Sarah Jenkins"
                   className="rounded-xl"
                 />
               </div>
@@ -356,7 +419,7 @@ export default function EeatSchemaGenerator() {
                   id="author-alt-name"
                   value={alternateName}
                   onChange={(e) => setAlternateName(e.target.value)}
-                  placeholder="e.g. Muhammad Usman Bashir"
+                  placeholder="e.g. Sarah Jane Jenkins"
                   className="rounded-xl"
                 />
               </div>
@@ -369,7 +432,7 @@ export default function EeatSchemaGenerator() {
                   id="author-title"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
-                  placeholder="e.g. Senior SEO Consultant"
+                  placeholder="e.g. Head of Search Marketing"
                   className="rounded-xl"
                 />
               </div>
@@ -379,7 +442,7 @@ export default function EeatSchemaGenerator() {
                   id="author-image"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://example.com/author.jpg"
+                  placeholder="https://example.com/images/author.jpg"
                   className="rounded-xl"
                 />
               </div>
@@ -402,7 +465,7 @@ export default function EeatSchemaGenerator() {
                   id="bio-url"
                   value={bioUrl}
                   onChange={(e) => setBioUrl(e.target.value)}
-                  placeholder="https://example.com/about"
+                  placeholder="https://example.com/author/sarah"
                   className="rounded-xl"
                 />
               </div>
@@ -417,7 +480,7 @@ export default function EeatSchemaGenerator() {
                   <Input
                     value={companyName}
                     onChange={(e) => setCompanyName(e.target.value)}
-                    placeholder="e.g. StartFleet"
+                    placeholder="e.g. Acme Media Corp"
                     className="rounded-xl"
                   />
                 </div>
@@ -426,7 +489,7 @@ export default function EeatSchemaGenerator() {
                   <Input
                     value={companyUrl}
                     onChange={(e) => setCompanyUrl(e.target.value)}
-                    placeholder="https://startfleet.io"
+                    placeholder="https://example.com"
                     className="rounded-xl"
                   />
                 </div>
@@ -448,7 +511,7 @@ export default function EeatSchemaGenerator() {
                     <Input
                       value={ownedOrgName}
                       onChange={(e) => setOwnedOrgName(e.target.value)}
-                      placeholder="e.g. Bobcat Digital LLC"
+                      placeholder="e.g. Jenkins Digital LLC"
                       className="rounded-xl"
                     />
                   </div>
@@ -457,7 +520,7 @@ export default function EeatSchemaGenerator() {
                     <Input
                       value={ownedOrgUrl}
                       onChange={(e) => setOwnedOrgUrl(e.target.value)}
-                      placeholder="https://bobcatdigital.co"
+                      placeholder="https://jenkinsdigital.com"
                       className="rounded-xl"
                     />
                   </div>
@@ -470,29 +533,31 @@ export default function EeatSchemaGenerator() {
           <TabsContent value="expertise" className="space-y-6 pt-2">
             {/* sameAs links */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-sm font-semibold">Authoritative Profiles (sameAs)</h4>
-                  <p className="text-xs text-muted-foreground">
-                    Link external profiles that prove the author is a real, reputable person.
-                  </p>
-                </div>
+              <div>
+                <h4 className="text-sm font-semibold">Authoritative Profiles (sameAs)</h4>
+                <p className="text-xs text-muted-foreground">
+                  Link external profiles that prove the author is a real, reputable person.
+                </p>
               </div>
 
               <div className="space-y-2">
-                {sameAsLinks.map((link, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <Input value={link} readOnly className="rounded-xl text-xs font-mono bg-muted/30" />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleRemoveSameAs(idx)}
-                      className="text-muted-foreground hover:text-red-500 shrink-0"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
+                {sameAsLinks.length === 0 ? (
+                  <p className="text-xs italic text-muted-foreground">No authority profiles added yet.</p>
+                ) : (
+                  sameAsLinks.map((link, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <Input value={link} readOnly className="rounded-xl text-xs font-mono bg-muted/30" />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleRemoveSameAs(idx)}
+                        className="text-muted-foreground hover:text-red-500 shrink-0"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))
+                )}
 
                 <div className="flex items-center gap-2 pt-1">
                   <Input
@@ -519,20 +584,22 @@ export default function EeatSchemaGenerator() {
               </div>
 
               {/* Active topics */}
-              <div className="flex flex-wrap gap-2">
-                {topics.map((t, idx) => (
-                  <Badge key={idx} variant="secondary" className="gap-1.5 py-1 px-2.5 rounded-lg text-xs">
-                    <span>{t.name}</span>
-                    {t.wiki && <ExternalLink className="h-2.5 w-2.5 text-primary opacity-70" />}
-                    <button
-                      onClick={() => handleRemoveTopic(idx)}
-                      className="ml-1 text-muted-foreground hover:text-red-500"
-                    >
-                      ×
-                    </button>
-                  </Badge>
-                ))}
-              </div>
+              {topics.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {topics.map((t, idx) => (
+                    <Badge key={idx} variant="secondary" className="gap-1.5 py-1 px-2.5 rounded-lg text-xs">
+                      <span>{t.name}</span>
+                      {t.wiki && <ExternalLink className="h-2.5 w-2.5 text-primary opacity-70" />}
+                      <button
+                        onClick={() => handleRemoveTopic(idx)}
+                        className="ml-1 text-muted-foreground hover:text-red-500 cursor-pointer"
+                      >
+                        ×
+                      </button>
+                    </Badge>
+                  ))}
+                </div>
+              )}
 
               {/* Suggested Topics Clickable Pills */}
               <div className="space-y-1.5">
@@ -581,64 +648,105 @@ export default function EeatSchemaGenerator() {
             </div>
           </TabsContent>
 
-          {/* TAB 3: Article Integration */}
-          <TabsContent value="article" className="space-y-4 pt-2">
-            <div className="flex items-center justify-between rounded-xl border p-4">
+          {/* TAB 3: Multiple Articles Integration */}
+          <TabsContent value="article" className="space-y-5 pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4 bg-muted/20">
               <div className="space-y-0.5">
-                <Label className="text-sm font-semibold">Generate Linked Article (BlogPosting) Schema</Label>
+                <h4 className="text-sm font-semibold">Articles by This Author ({articles.length})</h4>
                 <p className="text-xs text-muted-foreground">
-                  Connects the article&apos;s byline directly to the author entity via @id.
+                  Connect multiple articles/posts to this author entity via @id in a unified @graph.
                 </p>
               </div>
-              <Switch checked={includeArticle} onCheckedChange={setIncludeArticle} />
+              <Button onClick={handleAddArticle} size="sm" className="rounded-full gap-1.5 text-xs">
+                <Plus className="h-3.5 w-3.5" /> Add Article
+              </Button>
             </div>
 
-            {includeArticle && (
-              <div className="space-y-4 pt-2">
-                <div className="space-y-2">
-                  <Label htmlFor="article-headline">Article Headline</Label>
-                  <Input
-                    id="article-headline"
-                    value={articleHeadline}
-                    onChange={(e) => setArticleHeadline(e.target.value)}
-                    placeholder="Article title"
-                    className="rounded-xl"
-                  />
-                </div>
+            {articles.length === 0 ? (
+              <div className="rounded-xl border border-dashed p-8 text-center space-y-2">
+                <BookOpen className="h-8 w-8 text-muted-foreground mx-auto opacity-50" />
+                <p className="text-sm font-medium">No articles attached yet</p>
+                <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                  If you only need an author/person schema, you can leave this empty. If you want to connect published articles to this author, click &quot;Add Article&quot;.
+                </p>
+                <Button onClick={handleAddArticle} variant="outline" size="sm" className="rounded-full text-xs mt-2">
+                  + Add First Article
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {articles.map((art, idx) => (
+                  <Card key={art.id} className="p-4 rounded-xl border space-y-3 relative">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        Article #{idx + 1}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleRemoveArticle(art.id)}
+                        className="text-muted-foreground hover:text-red-500 h-8 px-2 text-xs gap-1"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Remove
+                      </Button>
+                    </div>
 
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="article-url">Article Canonical URL</Label>
-                    <Input
-                      id="article-url"
-                      value={articleUrl}
-                      onChange={(e) => setArticleUrl(e.target.value)}
-                      placeholder="https://example.com/article-slug"
-                      className="rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="article-date">Date Published (ISO 8601)</Label>
-                    <Input
-                      id="article-date"
-                      value={articleDatePublished}
-                      onChange={(e) => setArticleDatePublished(e.target.value)}
-                      placeholder="2026-10-02T13:11:42Z"
-                      className="rounded-xl font-mono text-xs"
-                    />
-                  </div>
-                </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs">Headline *</Label>
+                      <Input
+                        value={art.headline}
+                        onChange={(e) => handleUpdateArticle(art.id, "headline", e.target.value)}
+                        placeholder="e.g. Complete Guide to Modern Search Intent"
+                        className="rounded-lg text-sm"
+                      />
+                    </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="article-desc">Article Short Description</Label>
-                  <Textarea
-                    id="article-desc"
-                    value={articleDescription}
-                    onChange={(e) => setArticleDescription(e.target.value)}
-                    rows={2}
-                    className="rounded-xl text-sm"
-                  />
-                </div>
+                    <div className="grid gap-3 sm:grid-cols-3">
+                      <div className="space-y-1 sm:col-span-1">
+                        <Label className="text-xs">Canonical URL *</Label>
+                        <Input
+                          value={art.url}
+                          onChange={(e) => handleUpdateArticle(art.id, "url", e.target.value)}
+                          placeholder="https://example.com/blog/article-slug"
+                          className="rounded-lg text-xs"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Date Published</Label>
+                        <Input
+                          value={art.datePublished}
+                          onChange={(e) => handleUpdateArticle(art.id, "datePublished", e.target.value)}
+                          placeholder="2026-10-07"
+                          className="rounded-lg text-xs font-mono"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Date Modified</Label>
+                        <Input
+                          value={art.dateModified}
+                          onChange={(e) => handleUpdateArticle(art.id, "dateModified", e.target.value)}
+                          placeholder="2026-10-07"
+                          className="rounded-lg text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-xs">Short Description</Label>
+                      <Textarea
+                        value={art.description}
+                        onChange={(e) => handleUpdateArticle(art.id, "description", e.target.value)}
+                        placeholder="1-2 sentences summarizing the article content..."
+                        rows={2}
+                        className="rounded-lg text-xs"
+                      />
+                    </div>
+                  </Card>
+                ))}
+
+                <Button onClick={handleAddArticle} variant="outline" size="sm" className="rounded-full text-xs gap-1">
+                  <Plus className="h-3.5 w-3.5" /> Add Another Article
+                </Button>
               </div>
             )}
           </TabsContent>
@@ -671,7 +779,7 @@ export default function EeatSchemaGenerator() {
         </pre>
       </div>
 
-      {/* Installation Guide Accordion/Card */}
+      {/* Installation Guide */}
       <div className="rounded-2xl border bg-card p-6 space-y-4">
         <h4 className="text-base font-bold flex items-center gap-2">
           <Info className="h-4 w-4 text-primary" /> Where to Paste This Code
@@ -680,11 +788,11 @@ export default function EeatSchemaGenerator() {
           <div className="rounded-xl border p-4 bg-muted/20">
             <strong className="text-foreground block text-sm mb-1">WordPress:</strong>
             Paste directly into your theme&apos;s <code className="font-mono text-foreground">&lt;head&gt;</code> using WPCode,
-            Insert Headers and Footers plugin, or directly in your child theme&apos;s <code className="font-mono text-foreground">header.php</code>.
+            Insert Headers and Footers plugin, or your SEO plugin&apos;s custom schema section.
           </div>
           <div className="rounded-xl border p-4 bg-muted/20">
             <strong className="text-foreground block text-sm mb-1">Ghost / Webflow / Shopify:</strong>
-            Go to Page Settings → Code Injection / Custom Code → Add to <code className="font-mono text-foreground">Header Code</code>.
+            Go to Settings → Code Injection / Custom Code → Paste into <code className="font-mono text-foreground">Header Code</code>.
           </div>
         </div>
       </div>

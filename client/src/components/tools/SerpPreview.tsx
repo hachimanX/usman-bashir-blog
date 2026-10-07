@@ -15,14 +15,14 @@ import {
   Download,
   RotateCcw,
   Star,
-  ExternalLink,
   Sparkles,
   AlertTriangle,
   Info,
+  Scissors,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// Google SERP limits (pixel thresholds)
+// Google SERP thresholds (exact desktop and mobile pixel limits)
 const DESKTOP_TITLE_MAX_PX = 600;
 const MOBILE_TITLE_MAX_PX = 580;
 const DESKTOP_DESC_MAX_PX = 960;
@@ -54,20 +54,62 @@ function measureRichTextWidth(text: string, keyword: string, baseFont: string, b
   return total;
 }
 
+/** Truncates text by pixel width, appending ellipsis exactly where Google cuts it off */
+function truncateByPixels(
+  text: string,
+  keyword: string,
+  maxPx: number,
+  baseFont: string,
+  boldFont: string,
+): { text: string; isTruncated: boolean; cutoffIndex: number } {
+  const currentPx = measureRichTextWidth(text, keyword, baseFont, boldFont);
+  if (currentPx <= maxPx) {
+    return { text, isTruncated: false, cutoffIndex: text.length };
+  }
+
+  const ellipsis = " ...";
+  const ellipsisPx = measureTextWidth(ellipsis, baseFont);
+  const targetPx = Math.max(0, maxPx - ellipsisPx);
+
+  let low = 0;
+  let high = text.length;
+  let cutoff = 0;
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    const sub = text.slice(0, mid);
+    const subPx = measureRichTextWidth(sub, keyword, baseFont, boldFont);
+    if (subPx <= targetPx) {
+      cutoff = mid;
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  const truncatedText = text.slice(0, cutoff).trimEnd() + " ...";
+  return {
+    text: truncatedText,
+    isTruncated: true,
+    cutoffIndex: cutoff,
+  };
+}
+
 export default function SerpPreview() {
   const { toast } = useToast();
 
-  // Form State
+  // Generic Sample State (NO personal names or domains)
   const [title, setTitle] = useState("Best SEO Tools for Content Teams in 2026 (Tested & Ranked)");
   const [description, setDescription] = useState(
     "We tested 24 leading SEO tools on real client sites. Here is our honest comparison of keyword data, audit speed, and which tool actually drives compounding organic traffic.",
   );
-  const [url, setUrl] = useState("https://usmanbashir.net/articles/best-seo-tools");
+  const [url, setUrl] = useState("https://example.com/blog/best-seo-tools");
   const [keyword, setKeyword] = useState("SEO tools");
-  const [siteName, setSiteName] = useState("Usman Bashir");
+  const [siteName, setSiteName] = useState("Example Site");
 
   // Options State
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
+  const [simulateTruncation, setSimulateTruncation] = useState(true);
   const [showRating, setShowRating] = useState(true);
   const [rating, setRating] = useState("4.9");
   const [reviewCount, setReviewCount] = useState("128");
@@ -86,7 +128,7 @@ export default function SerpPreview() {
       if (params.get("u")) setUrl(params.get("u")!);
       if (params.get("k")) setKeyword(params.get("k")!);
       if (params.get("s")) setSiteName(params.get("s")!);
-    } catch (e) {
+    } catch {
       // Ignore hash parse errors
     }
   }, []);
@@ -103,7 +145,7 @@ export default function SerpPreview() {
     }
   }, [url]);
 
-  // Pixel calculations
+  // Pixel calculations matching Google font rules
   const titleFont = "20px Arial, sans-serif";
   const titleBoldFont = "bold 20px Arial, sans-serif";
   const descFont = "14px Arial, sans-serif";
@@ -124,6 +166,19 @@ export default function SerpPreview() {
 
   const isTitleTruncated = titlePx > titleMaxPx;
   const isDescTruncated = descPx > descMaxPx;
+
+  // Real truncation computations
+  const titleTruncation = useMemo(() => {
+    return truncateByPixels(title, keyword, titleMaxPx, titleFont, titleBoldFont);
+  }, [title, keyword, titleMaxPx]);
+
+  const descTruncation = useMemo(() => {
+    return truncateByPixels(description, keyword, descMaxPx, descFont, descBoldFont);
+  }, [description, keyword, descMaxPx]);
+
+  // What to display inside the Google result mockup
+  const displayTitle = simulateTruncation ? titleTruncation.text : title;
+  const displayDesc = simulateTruncation ? descTruncation.text : description;
 
   // Percentage for progress bars
   const titlePct = Math.min(100, Math.round((titlePx / titleMaxPx) * 100));
@@ -181,24 +236,24 @@ export default function SerpPreview() {
     setDescription(
       "We tested 24 leading SEO tools on real client sites. Here is our honest comparison of keyword data, audit speed, and which tool actually drives compounding organic traffic.",
     );
-    setUrl("https://usmanbashir.net/articles/best-seo-tools");
+    setUrl("https://example.com/blog/best-seo-tools");
     setKeyword("SEO tools");
-    setSiteName("Usman Bashir");
+    setSiteName("Example Site");
   };
 
-  // High-res Canvas Snapshot Export
+  // Canvas Image Snapshot Export
   const previewRef = useRef<HTMLDivElement>(null);
   const handleDownloadImage = () => {
     if (!previewRef.current) return;
     const canvas = document.createElement("canvas");
-    const width = 800;
-    const height = viewMode === "desktop" ? 380 : 440;
+    const width = 720;
+    const height = viewMode === "desktop" ? 340 : 400;
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Fill background
+    // Background
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
 
@@ -210,33 +265,32 @@ export default function SerpPreview() {
     // Header badge
     ctx.fillStyle = "#64748b";
     ctx.font = "12px sans-serif";
-    ctx.fillText(`GOOGLE SERP PREVIEW (${viewMode.toUpperCase()}) — usmanbashir.net`, 30, 40);
+    ctx.fillText(`GOOGLE SEARCH SNIPPET (${viewMode.toUpperCase()})`, 30, 40);
 
-    // Favicon placeholder circle
-    ctx.fillStyle = "#e2e8f0";
+    // Favicon pill
+    ctx.fillStyle = "#f1f3f4";
     ctx.beginPath();
-    ctx.arc(42, 80, 14, 0, Math.PI * 2);
+    ctx.arc(42, 75, 14, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "#0f172a";
+    ctx.fillStyle = "#202124";
     ctx.font = "bold 13px sans-serif";
-    ctx.fillText(siteName.slice(0, 2).toUpperCase(), 35, 84);
+    ctx.fillText((siteName || domain).slice(0, 1).toUpperCase(), 37, 80);
 
     // Site Name and Breadcrumb
     ctx.fillStyle = "#202124";
     ctx.font = "14px Arial, sans-serif";
-    ctx.fillText(siteName, 68, 76);
+    ctx.fillText(siteName || domain, 68, 72);
     ctx.fillStyle = "#4d5156";
     ctx.font = "12px Arial, sans-serif";
-    ctx.fillText(breadcrumbPath, 68, 93);
+    ctx.fillText(breadcrumbPath, 68, 90);
 
-    // Title (Blue link)
+    // Title (Truncated if over limit)
     ctx.fillStyle = "#1a0dab";
     ctx.font = "20px Arial, sans-serif";
-    const titleText = isTitleTruncated ? title.slice(0, 58) + "..." : title;
-    ctx.fillText(titleText, 30, 135);
+    ctx.fillText(displayTitle, 30, 130);
 
-    // Rich snippet rating
-    let textY = 165;
+    // Star rating
+    let textY = 160;
     if (showRating) {
       ctx.fillStyle = "#e37400";
       ctx.font = "14px Arial, sans-serif";
@@ -248,17 +302,12 @@ export default function SerpPreview() {
     ctx.fillStyle = "#4d5156";
     ctx.font = "14px Arial, sans-serif";
     const datePrefix = showDate ? `${dateStr} — ` : "";
-    const fullSnippet = datePrefix + description;
-    const line1 = fullSnippet.slice(0, 85);
-    const line2 = fullSnippet.length > 85 ? fullSnippet.slice(85, 170) + (isDescTruncated ? "..." : "") : "";
+    const fullSnippet = datePrefix + displayDesc;
+    const line1 = fullSnippet.slice(0, 80);
+    const line2 = fullSnippet.length > 80 ? fullSnippet.slice(80, 160) : "";
 
     ctx.fillText(line1, 30, textY);
     if (line2) ctx.fillText(line2, 30, textY + 22);
-
-    // Watermark
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "11px sans-serif";
-    ctx.fillText("Generated with free SERP Preview on usmanbashir.net", 30, height - 25);
 
     // Trigger download
     const link = document.createElement("a");
@@ -268,13 +317,13 @@ export default function SerpPreview() {
 
     toast({
       title: "Image downloaded",
-      description: "Clean PNG preview exported for client decks or reports.",
+      description: "Clean PNG preview exported.",
     });
   };
 
   return (
     <div className="space-y-8">
-      {/* Controls & Mode Bar */}
+      {/* Controls Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-card/60 p-4 backdrop-blur-xs">
         <div className="flex items-center gap-2">
           <Button
@@ -317,30 +366,43 @@ export default function SerpPreview() {
         </div>
       </div>
 
-      {/* Main Interactive Preview Card */}
+      {/* Main Interactive Google Search Card */}
       <div className="space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" /> Live Google Search Result
           </h2>
-          <span className="text-xs text-muted-foreground">
-            {viewMode === "desktop" ? "Desktop Simulation (600px title limit)" : "Mobile Card (580px title limit)"}
-          </span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <Switch
+                id="trunc-toggle"
+                checked={simulateTruncation}
+                onCheckedChange={setSimulateTruncation}
+              />
+              <Label htmlFor="trunc-toggle" className="text-xs text-muted-foreground cursor-pointer flex items-center gap-1">
+                <Scissors className="h-3 w-3" /> Truncate at cutoff
+              </Label>
+            </div>
+            <span className="text-xs text-muted-foreground font-mono">
+              Limit: {titleMaxPx}px
+            </span>
+          </div>
         </div>
 
+        {/* The Google Card Mockup */}
         <div
           ref={previewRef}
           className={`rounded-2xl border p-6 transition-all ${
             viewMode === "desktop"
-              ? "bg-[#ffffff] dark:bg-[#202124] text-[#4d5156] dark:text-[#bdc1c6] max-w-full"
-              : "bg-[#ffffff] dark:bg-[#202124] text-[#4d5156] dark:text-[#bdc1c6] max-w-md mx-auto shadow-sm"
+              ? "bg-[#ffffff] dark:bg-[#202124] text-[#4d5156] dark:text-[#bdc1c6] max-w-[650px]"
+              : "bg-[#ffffff] dark:bg-[#202124] text-[#4d5156] dark:text-[#bdc1c6] max-w-[390px] mx-auto shadow-sm"
           }`}
         >
-          {/* Top Row: Favicon, Site Name, URL & Options */}
+          {/* Favicon, Site Name, Breadcrumb Path */}
           <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-3 overflow-hidden">
               <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#f1f3f4] dark:bg-[#303134] text-[#202124] dark:text-[#e8eaed] font-bold text-xs">
-                {siteName.slice(0, 1).toUpperCase()}
+                {(siteName || domain).slice(0, 1).toUpperCase()}
               </div>
               <div className="min-w-0">
                 <div className="truncate font-medium text-[#202124] dark:text-[#dadce0] text-[13px]">
@@ -356,19 +418,29 @@ export default function SerpPreview() {
             </div>
           </div>
 
-          {/* Title Tag */}
-          <div className="mt-2.5">
+          {/* Title Tag - Truncates at pixel limit */}
+          <div className="mt-2.5 max-w-[600px] overflow-hidden">
             <a
               href="#preview"
               onClick={(e) => e.preventDefault()}
-              className="font-normal text-[20px] leading-[1.3] text-[#1a0dab] dark:text-[#8ab4f8] hover:underline cursor-pointer break-words"
+              className="font-normal text-[20px] leading-[1.3] text-[#1a0dab] dark:text-[#8ab4f8] hover:underline cursor-pointer block"
               style={{ fontFamily: "Arial, sans-serif" }}
             >
-              {renderHighlighted(title, "font-bold text-[#1a0dab] dark:text-[#8ab4f8]")}
+              {renderHighlighted(displayTitle, "font-bold text-[#1a0dab] dark:text-[#8ab4f8]")}
             </a>
           </div>
 
-          {/* Optional Rich Snippet: Star Rating */}
+          {/* Truncation alert pill inside mockup when clipped */}
+          {isTitleTruncated && simulateTruncation && (
+            <div className="mt-1.5 flex items-center gap-1.5 text-[11px] text-amber-600 dark:text-amber-400">
+              <Scissors className="h-3 w-3 shrink-0" />
+              <span className="font-mono truncate">
+                Clipped by {titlePx - titleMaxPx}px: &quot;{title.slice(titleTruncation.cutoffIndex)}&quot;
+              </span>
+            </div>
+          )}
+
+          {/* Optional Star Rating */}
           {showRating && (
             <div className="mt-2 flex items-center gap-1.5 text-xs text-[#e37400] dark:text-[#f2994a]">
               <div className="flex items-center">
@@ -384,7 +456,7 @@ export default function SerpPreview() {
 
           {/* Meta Description with Date */}
           <div
-            className="mt-2 text-[14px] leading-[1.58] text-[#4d5156] dark:text-[#bdc1c6] break-words"
+            className="mt-2 text-[14px] leading-[1.58] text-[#4d5156] dark:text-[#bdc1c6] max-w-[600px] overflow-hidden"
             style={{ fontFamily: "Arial, sans-serif" }}
           >
             {showDate && (
@@ -392,7 +464,7 @@ export default function SerpPreview() {
                 {dateStr} —
               </span>
             )}
-            {renderHighlighted(description, "font-bold text-[#202124] dark:text-[#e8eaed]")}
+            {renderHighlighted(displayDesc, "font-bold text-[#202124] dark:text-[#e8eaed]")}
           </div>
         </div>
       </div>
@@ -425,12 +497,12 @@ export default function SerpPreview() {
             {isTitleTruncated ? (
               <>
                 <AlertTriangle className="h-3.5 w-3.5 text-red-500 shrink-0" />
-                <span>Google will likely truncate this title with &apos;...&apos;. Shorten by ~{titlePx - titleMaxPx}px.</span>
+                <span>Truncated with &apos;...&apos;. Title is {titlePx - titleMaxPx}px wider than Google allows.</span>
               </>
             ) : (
               <>
                 <Check className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                <span>Safe. Your title fits comfortably within Google&apos;s pixel boundaries.</span>
+                <span>Fits fully on Google {viewMode}. Zero truncation.</span>
               </>
             )}
           </p>
@@ -462,12 +534,12 @@ export default function SerpPreview() {
             {isDescTruncated ? (
               <>
                 <AlertTriangle className="h-3.5 w-3.5 text-red-500 shrink-0" />
-                <span>Snippet exceeds {viewMode} display limit. It may be truncated or rewritten by Google.</span>
+                <span>Snippet exceeds {viewMode} display limit (~{descPx - descMaxPx}px over). Google will truncate or rewrite it.</span>
               </>
             ) : (
               <>
                 <Check className="h-3.5 w-3.5 text-green-500 shrink-0" />
-                <span>Optimal length. Clean 2-line snippet on Google search.</span>
+                <span>Optimal length. Clean snippet on Google {viewMode}.</span>
               </>
             )}
           </p>
