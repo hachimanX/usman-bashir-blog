@@ -19,7 +19,7 @@ Almost every article on this topic is a list of prompts. "Write me a social medi
 
 The problem is not the prompts. It is that most people are using ChatGPT for the jobs it is worst at, and not using it for the jobs where it genuinely saves hours.
 
-This article covers five workflows I actually use, with the prompts. Then it covers the ceiling — the specific point where ChatGPT stops being the right tool, which nobody selling you a prompt pack will mention.
+This article covers five workflows I actually use, with the prompts. Then it covers the ceiling - the specific point where ChatGPT stops being the right tool, which nobody selling you a prompt pack will mention.
 
 ## Where ChatGPT Is Genuinely Excellent
 
@@ -35,7 +35,7 @@ The prompt that works is not "write a sales email." It is this shape:
 >
 > Reply to this. I want to decline the March timeline but keep the project alive for Q3. Warm but not apologetic. Four sentences maximum. Do not open with "I hope this finds you well."
 
-Three things make that work: real context pasted in, a stated outcome rather than a topic, and a length constraint. The last line matters more than you would think — banning specific phrases you hate is the fastest way to fix ChatGPT's default register.
+Three things make that work: real context pasted in, a stated outcome rather than a topic, and a length constraint. The last line matters more than you would think - banning specific phrases you hate is the fastest way to fix ChatGPT's default register.
 
 ### 2. Turning one asset into many
 
@@ -43,7 +43,7 @@ You wrote something good. Now you need it as a LinkedIn post, a newsletter intro
 
 > Below is an article I wrote. [paste full text]
 >
-> Pull out the single sharpest claim in it — not a summary, the one line that would make someone stop scrolling. Then write a LinkedIn post built around only that claim. Short lines, whitespace between them, no hashtags, no link. Do not summarise the article. End on a question I could answer in the comments.
+> Pull out the single sharpest claim in it - not a summary, the one line that would make someone stop scrolling. Then write a LinkedIn post built around only that claim. Short lines, whitespace between them, no hashtags, no link. Do not summarise the article. End on a question I could answer in the comments.
 
 The instruction that changes the output is "not a summary." Left alone, ChatGPT will summarise, because summarizing is safe. Repurposing well means throwing away 90% of the source and going deep on the remaining 10%.
 
@@ -51,11 +51,11 @@ The instruction that changes the output is "not a summary." Left alone, ChatGPT 
 
 This is the most underrated one on the list.
 
-Your customers describe their problem in words you have stopped using, because you are too close to the product. Those words are sitting in reviews — yours and your competitors'.
+Your customers describe their problem in words you have stopped using, because you are too close to the product. Those words are sitting in reviews - yours and your competitors'.
 
 > Below are 40 customer reviews of a competing product. [paste]
 >
-> Ignore the star ratings. Extract the exact phrases people use to describe the problem the product solved, and the exact phrases they use to describe what frustrated them. Group them by theme. Quote verbatim — do not paraphrase into marketing language.
+> Ignore the star ratings. Extract the exact phrases people use to describe the problem the product solved, and the exact phrases they use to describe what frustrated them. Group them by theme. Quote verbatim - do not paraphrase into marketing language.
 
 "Do not paraphrase into marketing language" is doing the heavy lifting. Without it you get "customers value reliability." With it you get the sentence a real person typed, which is what belongs on your landing page.
 
@@ -100,11 +100,11 @@ Custom GPTs do not solve this either, which is the objection I get most. A Custo
 
 ## What I Use Instead, and Why
 
-For anything that has to be correct about my own numbers, I use Claude — specifically Claude Code, which runs on my machine and can execute scripts rather than just describe them.
+For anything that has to be correct about my own numbers, I use Claude - specifically Claude Code, which runs on my machine and can execute scripts rather than just describe them.
 
-The setup for a client site I run: a folder of ordinary Python scripts that hit documented APIs. `gsc-fetch.py` for Search Console. `bing-fetch.py` for Bing Webmaster Tools. `nozzle-fetch.py` for rank tracking. `striking-distance.py` to find the near-miss rankings worth attacking. None of them are clever. What matters is that the writing tool can run them itself, read the output, read my brand files, and then draft — in one pass, with no manual exports.
+The setup for a client site I run: a folder of ordinary Python scripts that hit documented APIs. `gsc-fetch.py` for Search Console. `bing-fetch.py` for Bing Webmaster Tools. `nozzle-fetch.py` for rank tracking. `striking-distance.py` to find the near-miss rankings worth attacking. None of them are clever. What matters is that the writing tool can run them itself, read the output, read my brand files, and then draft - in one pass, with no manual exports.
 
-That capability is worth more than any difference in prose quality between the two tools. One concrete example: the standard SEO advice is "filter pages to average position 9–30 and optimize those." That advice is wrong. A page's average position is an impression-weighted blend across every query, device and country it appears for, so it hides a query sitting at #4 and drags in ones at #60. I only found that because the tool and the data were in the same place and I could actually look. My script works at the query-and-page-pair level instead, with an impressions floor so it does not chase terms nobody searches.
+That capability is worth more than any difference in prose quality between the two tools. One concrete example: the standard SEO advice is "filter pages to average position 9 - 30 and optimize those." That advice is wrong. A page's average position is an impression-weighted blend across every query, device and country it appears for, so it hides a query sitting at #4 and drags in ones at #60. I only found that because the tool and the data were in the same place and I could actually look. My script works at the query-and-page-pair level instead, with an impressions floor so it does not chase terms nobody searches.
 
 You cannot arrive at that correction from a chat window.
 
@@ -160,9 +160,9 @@ The moment the work depends on data the tool has to go and get, you have hit the
 
 ---
 
-**If the data-fetching part is what you actually need,** Claude Code is included in Claude Pro at $20/month, and [this referral link gives you a free week to try it](https://claude.ai/referral/UHw2Yi_K2A). If you subscribe afterwards I get $10 in usage credits — that is all, and it costs you nothing.
+**If the data-fetching part is what you actually need,** Claude Code is included in Claude Pro at $20/month, and [this referral link gives you a free week to try it](https://claude.ai/referral/UHw2Yi_K2A). If you subscribe afterwards I get $10 in usage credits - that is all, and it costs you nothing.
 
-**I write about building marketing systems rather than collecting prompts.** [Subscribe here](#newsletter) — the Search Console fetch setup is going out cleaned up and documented.
+**I write about building marketing systems rather than collecting prompts.** [Subscribe here](#newsletter) - the Search Console fetch setup is going out cleaned up and documented.
 
 ---
 
