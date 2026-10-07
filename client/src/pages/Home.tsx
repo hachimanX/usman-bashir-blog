@@ -68,27 +68,18 @@ export default function Home() {
       />
       <Header />
       <main id="main" className="flex-1">
-        {/* Hero: name, one line, two ways forward, and a real face. */}
+        {/* Hero: name, positioning, and actions. Clean typography-first layout. */}
         <section className="relative overflow-hidden border-b">
           <div aria-hidden="true" className="brand-glow pointer-events-none absolute inset-0" />
-          <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.3fr_0.7fr] lg:gap-16 lg:px-8 lg:py-24">
+          <div className="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8 lg:py-28">
             <div className="animate-in fade-in-0 slide-in-from-bottom-3 duration-700">
-              {/* On small screens the portrait would land below the fold, so a
-                  small round version sits above the name instead. */}
-              <img
-                src="/usman.jpg"
-                alt=""
-                width={80}
-                height={80}
-                className="mb-6 h-20 w-20 rounded-full border object-cover lg:hidden"
-              />
               <h1 className="text-5xl font-semibold leading-[1.02] tracking-[-0.035em] sm:text-6xl lg:text-7xl">
                 Usman Bashir
               </h1>
-              <p className="mt-6 max-w-[26ch] font-display text-2xl font-medium leading-[1.25] tracking-[-0.02em] sm:text-3xl">
+              <p className="mt-6 max-w-[32ch] font-display text-2xl font-medium leading-[1.25] tracking-[-0.02em] sm:text-3xl lg:text-4xl">
                 {HERO.lead} <span className="accent-word">{HERO.accent}</span>
               </p>
-              <p className="mt-5 max-w-[52ch] text-lg leading-relaxed text-muted-foreground">
+              <p className="mt-5 max-w-[56ch] text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 {HERO.sub}
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
@@ -101,21 +92,6 @@ export default function Home() {
                   <a href="#contact">Get in touch</a>
                 </Button>
               </div>
-            </div>
-
-            <div className="relative mx-auto hidden w-full max-w-[360px] lg:block">
-              <div
-                aria-hidden="true"
-                className="brand-mark absolute -inset-5 rounded-[2.25rem] opacity-25 blur-2xl"
-              />
-              <img
-                src="/usman.jpg"
-                alt="Usman Bashir"
-                width={400}
-                height={400}
-                {...{ fetchpriority: "high" }}
-                className="relative aspect-square w-full rounded-[1.75rem] border object-cover"
-              />
             </div>
           </div>
         </section>

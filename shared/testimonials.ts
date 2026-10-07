@@ -105,11 +105,10 @@ export const TESTIMONIALS: Testimonial[] = [
  * Amanda Dong's video review (recorded January 2025). Self-hosted: 16.7 MB,
  * under the 25 MB per-file limit for Workers static assets, and remuxed with
  * +faststart so it starts playing before the whole file has downloaded.
- * TODO: add her company name once Usman confirms the exact spelling.
  */
 export const VIDEO_TESTIMONIAL = {
   author: "Amanda Dong",
-  role: "Overseas Director, Hong Kong",
+  role: "Overseas Director, Qiangtong Press",
   src: "/media/amanda-dong-testimonial.mp4",
   poster: "/images/amanda-dong-poster.webp",
   width: 480,

@@ -3,7 +3,7 @@
  * worker's crawler HTML print the same words.
  *
  * Written from what the code actually does (checked October 2026): no
- * analytics or ad scripts, one cookie (the admin login), newsletter stores an
+ * analytics, ad scripts or cookies, newsletter stores an
  * email address and signup date, the Trademark Pre-Check calls the USPTO from
  * the visitor's browser. If any of that changes, change this file with it.
  *
@@ -99,7 +99,7 @@ export const LEGAL_DOCS: LegalDoc[] = [
       {
         heading: "Cookies and local storage",
         paragraphs: [
-          "The site does not set cookies for visitors. The only cookie is the login for the admin area, which only I use.",
+          "This site does not set tracking cookies or third-party cookies.",
           "If you switch between the light and dark theme, that choice is saved in your browser's local storage. It stays on your device and is never sent to me.",
         ],
       },
